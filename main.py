@@ -23,8 +23,11 @@ def init_query_task(query_task_config_list: list):
     log.info("初始化查询任务")
     for config in query_task_config_list:
         if config.get('enable', False):
-            schedule.every(config.get("intervals_second", 60)).seconds.do(query_task.get_query_task(config).query)
+            current_query = query_task.get_query_task(config).query
+            schedule.every(config.get("intervals_second", 60)).seconds.do(current_query)
             log.info(f"初始化查询任务: {config.get('name', '')}，任务类型: {config.get('type', None)}")
+            # 先执行一次
+            current_query()
 
     while True:
         schedule.run_pending()
