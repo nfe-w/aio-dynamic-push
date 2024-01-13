@@ -1,0 +1,124 @@
+common:
+  # ip 代理池
+  proxy_pool:
+    # 是否启用 true/false
+    enable: false
+    # ip池地址，参考 https://github.com/jhao104/proxy_pool
+    proxy_pool_url: http://ip:port
+
+query_task:
+  # 任务名称，可自定义
+  - name: 任务_bilibili
+    # 是否启用 true/false
+    enable: false
+    # 任务类型，bilibili/weibo/xhs/douyin
+    type: bilibili
+    # 查询间隔，单位秒，不建议设置太频繁
+    intervals_second: 60
+    # 查询开始时间，格式 HH:mm
+    begin_time: "00:00"
+    # 查询结束时间，格式 HH:mm
+    end_time: "23:59"
+    # 推送通道名称，对应 push_channel 中的 name
+    target_push_name_list:
+      - 推送通道_企业微信应用
+      - 推送通道_钉钉机器人
+    # 是否启用动态检测 true/false
+    enable_dynamic_check: true
+    # 是否启用直播检测 true/false
+    enable_living_check: true
+    # 用户 uid 列表，参考 https://space.bilibili.com/1795147802
+    uid_list:
+      - 1795147802
+      - 1669777785
+      - 1778026586
+      - 1875044092
+      - 1811071010
+      - 2018113152
+  - name: 任务_weibo
+    enable: false
+    type: weibo
+    intervals_second: 60
+    begin_time: "00:00"
+    end_time: "23:59"
+    target_push_name_list:
+      - 推送通道_企业微信应用
+      - 推送通道_钉钉机器人
+    enable_dynamic_check: true
+    # 用户 uid 列表，参考 https://weibo.com/u/7198559139
+    uid_list:
+      - 7198559139
+      - 1765893783
+  - name: 任务_xhs
+    enable: false
+    type: xhs
+    intervals_second: 300
+    begin_time: "00:00"
+    end_time: "23:59"
+    target_push_name_list:
+      - 推送通道_企业微信应用
+      - 推送通道_钉钉机器人
+    enable_dynamic_check: true
+    # 用户 profile_id 列表，参考 https://www.xiaohongshu.com/user/profile/52d8c541b4c4d60e6c867480
+    profile_id_list:
+      - 52d8c541b4c4d60e6c867480
+      - 5bf64788aa4b0a000114b879
+  - name: 任务_douyin
+    enable: false
+    type: douyin
+    intervals_second: 30
+    begin_time: "00:00"
+    end_time: "23:59"
+    target_push_name_list:
+      - 推送通道_企业微信应用
+      - 推送通道_钉钉机器人
+    enable_dynamic_check: true
+    # 签名服务器url，参考 https://github.com/coder-fly/douyin-signature
+    signature_server_url: http://ip:port
+    # 用户名列表，必填（接口现在不返回作者信息了，重新获取还挺麻烦的，自己填上凑合用先）
+    username_list:
+      - 嘉然今天吃什么
+      - 七海Nana7mi
+    # 作者sec_uid列表，参考 https://www.douyin.com/user/MS4wLjABAAAA5ZrIrbgva_HMeHuNn64goOD2XYnk4ItSypgRHlbSh1c
+    sec_uid_list:
+      - MS4wLjABAAAA5ZrIrbgva_HMeHuNn64goOD2XYnk4ItSypgRHlbSh1c
+      - MS4wLjABAAAAGeiluJjizroSmPhcNdlsS0b7M0rxi5ygfrtqdByE0FCYi__j0fS_E52uGaF7ujpn
+    enable_living_check: true
+    # 抖音号列表，用于检测开播状态，如果不开启直播检测可以不填，暂不支持纯数字的抖音号
+    douyin_id_list:
+      - ASOULjiaran
+      - Nana7mi0715
+
+push_channel:
+  # 通道名称，唯一，可自定义不要纯数字，对应 query_task 中的 target_push_name_list
+  - name: 推送通道_Server酱_Turbo
+    # 是否启用 true/false
+    enable: false
+    # 通道类型，serverChan_turbo/wecom_apps/dingtalk_bot/bark/feishu_bot
+    type: serverChan_turbo
+    # Server酱_Turbo推送服务，如果启用该推送，必须填入，获取参考 https://sct.ftqq.com
+    send_key:
+  - name: 推送通道_企业微信应用
+    enable: false
+    type: wecom_apps
+    # 企业id，如果启动该推送则必填
+    corp_id:
+    # 应用id，如果启动该推送则必填
+    agent_id:
+    # 应用Secret，如果启动该推送则必填
+    corp_secret:
+  - name: 推送通道_钉钉机器人
+    enable: false
+    type: dingtalk_bot
+    # 机器人秘钥，如果启动该推送则必填
+    access_token:
+  - name: 推送通道_Bark
+    enable: false
+    type: bark
+    # iOS 设备专用，Bark app 的key，如果启动该推送则必填
+    key:
+  - name: 推送通道_飞书机器人
+    enable: false
+    type: feishu_bot
+    # 飞书机器人webhook key，如果启动该推送则必填
+    webhook_key:
