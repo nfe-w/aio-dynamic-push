@@ -94,7 +94,7 @@ push_channel:
   - name: 推送通道_Server酱_Turbo
     # 是否启用 true/false
     enable: false
-    # 通道类型，serverChan_turbo/wecom_apps/dingtalk_bot/bark/feishu_bot
+    # 通道类型，serverChan_turbo/wecom_apps/dingtalk_bot/bark/feishu_apps/feishu_bot
     type: serverChan_turbo
     # Server酱_Turbo推送服务，如果启用该推送，必须填入，获取参考 https://sct.ftqq.com
     send_key:
@@ -112,13 +112,24 @@ push_channel:
     type: dingtalk_bot
     # 机器人秘钥，如果启动该推送则必填
     access_token:
-  - name: 推送通道_Bark
+  - name: 推送通道_飞书自建应用
     enable: false
-    type: bark
-    # iOS 设备专用，Bark app 的key，如果启动该推送则必填
-    key:
+    type: feishu_apps
+    # 飞书自建应用的app_id，如果启动该推送则必填
+    app_id:
+    # 飞书自建应用的app_secret，如果启动该推送则必填
+    app_secret:
+    # 消息接收者id类型 open_id/user_id/union_id/email/chat_id，详见 https://open.feishu.cn/document/server-docs/im-v1/message/create
+    receive_id_type:
+    # 消息接收者的ID，ID类型应与查询参数receive_id_type 对应
+    receive_id:
   - name: 推送通道_飞书机器人
     enable: false
     type: feishu_bot
     # 飞书机器人webhook key，如果启动该推送则必填
     webhook_key:
+  - name: 推送通道_Bark
+    enable: false
+    type: bark
+    # iOS 设备专用，Bark app 的key，如果启动该推送则必填
+    key:

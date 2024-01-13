@@ -1,0 +1,140 @@
+import json
+import mimetypes
+import os
+import uuid
+
+from requests_toolbelt import MultipartEncoder
+
+from common import util
+from common.logger import log
+from . import PushChannel
+
+
+class FeishuApps(PushChannel):
+    def __init__(self, config):
+        super().__init__(config)
+        self.app_id = str(config.get("app_id", ""))
+        self.app_secret = str(config.get("app_secret", ""))
+        self.receive_id_type = str(config.get("receive_id_type", ""))
+        self.receive_id = str(config.get("receive_id", ""))
+
+    def push(self, title, content, jump_url=None, pic_url=None):
+        tenant_access_token = self._get_tenant_access_token()
+        if tenant_access_token is None:
+            return None
+        url = f"https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type={self.receive_id_type}"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {tenant_access_token}"
+        }
+        card_elements = [
+            {
+                "tag": "markdown",
+                "content": content
+            }
+        ]
+        if pic_url is not None:
+            img_key = self._get_img_key(pic_url)
+            if img_key is not None:
+                card_elements.append({
+                    "alt": {
+                        "content": "",
+                        "tag": "plain_text"
+                    },
+                    "img_key": img_key,
+                    "tag": "img"
+                })
+        card_elements.append({
+            "tag": "action",
+            "actions": [
+                {
+                    "tag": "button",
+                    "text": {
+                        "tag": "plain_text",
+                        "content": "点我跳转"
+                    },
+                    "type": "primary",
+                    "url": jump_url
+                }
+            ]
+        })
+        content = {
+            "config": {
+                "wide_screen_mode": True
+            },
+            "header": {
+                "template": "blue",
+                "title": {
+                    "content": title,
+                    "tag": "plain_text"
+                }
+            },
+            "elements": card_elements
+        }
+        body = {
+            "receive_id": self.receive_id,
+            "msg_type": "interactive",
+            "content": json.dumps(content)
+        }
+        response = util.requests_post(url, self.name, headers=headers, data=json.dumps(body))
+        push_result = "成功" if util.check_response_is_ok(response) else "失败"
+        log.info(f"【推送_{self.name}】{push_result}")
+
+    def _get_img_key(self, pic_url: str):
+        # 下载图片
+        response = util.requests_get(pic_url)
+        if not util.check_response_is_ok(response):
+            log.error(f"【推送_{self.name}】下载图片{pic_url}失败")
+            return None
+        content_type = response.headers['Content-Type']
+        extension = mimetypes.guess_extension(content_type)
+        # 如果无法从内容类型推断扩展名，则默认使用.jpg
+        if not extension:
+            extension = '.jpg'
+        file_path = str(uuid.uuid4()) + extension
+        with open(file_path, 'wb') as file:
+            file.write(response.content)
+        log.info(f"【推送_{self.name}】下载图片{pic_url}成功")
+
+        # 上传图片
+        tenant_access_token = self._get_tenant_access_token()
+        if tenant_access_token is None:
+            # 删除本地文件
+            os.remove(file_path)
+            return None
+
+        url = "https://open.feishu.cn/open-apis/im/v1/images"
+        multi_form = MultipartEncoder({
+            'image_type': 'message',
+            'image': (open(file_path, 'rb'))
+        })
+        headers = {
+            'Authorization': f"Bearer {tenant_access_token}",
+            'Content-Type': multi_form.content_type,
+        }
+        response = util.requests_post(url, self.name, headers=headers, data=multi_form)
+        if util.check_response_is_ok(response):
+            # 删除本地文件
+            os.remove(file_path)
+            return response.json()["data"]["image_key"]
+        else:
+            log.error(f"【推送_{self.name}】上传图片失败")
+            # 删除本地文件
+            os.remove(file_path)
+            return None
+
+    def _get_tenant_access_token(self):
+        url = f"https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/"
+        headers = {
+            "Content-Type": "application/json; charset=utf-8"
+        }
+        body = {
+            "app_id": self.app_id,
+            "app_secret": self.app_secret
+        }
+        response = util.requests_post(url, self.name, headers=headers, data=json.dumps(body))
+        if util.check_response_is_ok(response):
+            return response.json()["tenant_access_token"]
+        else:
+            log.error(f"【推送_{self.name}】获取tenant_access_token失败")
+            return None

@@ -2,6 +2,7 @@ from ._push_channel import PushChannel
 from .bark import Bark
 from .demo import Demo
 from .dingtalk_bot import DingtalkBot
+from .feishu_apps import FeishuApps
 from .feishu_bot import FeishuBot
 from .server_chan_turbo import ServerChanTurbo
 from .wecom_apps import WeComApps
@@ -17,6 +18,8 @@ def get_push_channel(config):
         return WeComApps(config)
     if channel_type == "dingtalk_bot":
         return DingtalkBot(config)
+    if channel_type == "feishu_apps":
+        return FeishuApps(config)
     if channel_type == "feishu_bot":
         return FeishuBot(config)
     if channel_type == "bark":
