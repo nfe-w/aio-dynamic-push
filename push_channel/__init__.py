@@ -1,5 +1,6 @@
 from ._push_channel import PushChannel
 from .bark import Bark
+from .demo import Demo
 from .dingtalk_bot import DingtalkBot
 from .feishu_bot import FeishuBot
 from .server_chan_turbo import ServerChanTurbo
@@ -20,5 +21,7 @@ def get_push_channel(config):
         return FeishuBot(config)
     if channel_type == "bark":
         return Bark(config)
+    if channel_type == "demo":
+        return Demo(config)
     else:
         raise ValueError(f"不支持的通道类型: {channel_type}")

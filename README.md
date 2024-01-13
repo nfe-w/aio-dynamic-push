@@ -37,6 +37,11 @@ docker run -d -v [配置文件的绝对路径]/config.yml:/mnt/config.yml nfew/a
 
 - 支持配置多种推送通道
 
+## 开发说明
+
+- 新增查询任务：详见 `query_task/query_demo.py`
+- 新增推送通道：详见 `push_channel/demo.py`
+
 ## 运行环境
 
 - [Python 3](https://www.python.org/)
