@@ -94,7 +94,7 @@ push_channel:
   - name: 推送通道_Server酱_Turbo
     # 是否启用 true/false
     enable: false
-    # 通道类型，serverChan_turbo/wecom_apps/dingtalk_bot/bark/feishu_apps/feishu_bot
+    # 通道类型，serverChan_turbo/wecom_apps/dingtalk_bot/feishu_apps/feishu_bot/bark/webhook
     type: serverChan_turbo
     # Server酱_Turbo推送服务，如果启用该推送，必须填入，获取参考 https://sct.ftqq.com
     send_key:
@@ -133,3 +133,10 @@ push_channel:
     type: bark
     # iOS 设备专用，Bark app 的key，如果启动该推送则必填
     key:
+  - name: 推送通道_Webhook
+    enable: false
+    type: webhook
+    # Webhook 地址，如果启动该推送则必填，标题和内容使用 {{title}} 和 {{content}} 占位符
+    webhook_url: https://xxx.com?title={{title}}&content={{content}}
+    # 请求方法，GET/POST
+    request_method: GET

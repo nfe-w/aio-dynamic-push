@@ -11,7 +11,7 @@
 
 ## 工作流程
 
-![](docs/image/aio-dynamic-push.jpg)
+![](docs/image/aio-dynamic-push.png)
 
 ## Docker（推荐的部署方式）
 

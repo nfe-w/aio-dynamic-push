@@ -5,6 +5,7 @@ from .dingtalk_bot import DingtalkBot
 from .feishu_apps import FeishuApps
 from .feishu_bot import FeishuBot
 from .server_chan_turbo import ServerChanTurbo
+from .webhook import Webhook
 from .wecom_apps import WeComApps
 
 push_channel_dict = {}
@@ -24,6 +25,8 @@ def get_push_channel(config):
         return FeishuBot(config)
     if channel_type == "bark":
         return Bark(config)
+    if channel_type == "webhook":
+        return Webhook(config)
     if channel_type == "demo":
         return Demo(config)
     else:
