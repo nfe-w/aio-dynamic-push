@@ -33,9 +33,26 @@ docker run -d -v [配置文件的绝对路径]/config.yml:/mnt/config.yml nfew/a
 
 - 支持配置多项不同的任务，并为不同的任务配置不同的推送通道
 
+| 任务类型 | type     | 动态检测 | 开播检测 |
+|------|----------|:----:|:----:|
+| B站   | bilibili |  ✅   |  ✅   |
+| 微博   | weibo    |  ✅   |  ❌   |
+| 小红书  | xhs      |  ✅   |  ❌   |
+| 抖音   | douyin   |  ✅   |  ✅   |
+
 (3)`push_channel`下的参数
 
 - 支持配置多种推送通道
+
+| 通道类型          | type             | 推送附带图片  | 说明                                                                                                          |
+|---------------|------------------|:-------:|-------------------------------------------------------------------------------------------------------------|
+| Server酱_Turbo | serverChan_turbo |    ❌    | 🤖方便，不用安装app，免费用户5次/天，适合频率不高的用户<br/>👉https://sct.ftqq.com                                                  |
+| 企业微信自建应用      | wecom_apps       |    ✅    | 😢新用户不再推荐，2022年6月20日之后新创建的应用，需要配置可信IP<br/>👉https://work.weixin.qq.com/wework_admin/frame#apps/createApiApp |
+| 钉钉群聊机器人       | dingtalk_bot     |    ✅    | 🥳推荐，新建群聊添加自定义机器人即可，自定义关键词使用【<br/>👉https://open.dingtalk.com/document/robots/custom-robot-access           |
+| 飞书自建应用        | feishu_apps      |    ✅    | 🤔可以使用个人版，创建应用，授予其机器人权限<br/>👉https://open.feishu.cn/app?lang=zh-CN                                         |
+| 飞书群聊机器人       | feishu_bot       | ❌(暂不支持) | 🤩推荐，新建群聊添加自定义机器人即可，自定义关键词使用 【<br/>👉https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot      |
+| Bark          | bark             |    ❌    | 🍎适合苹果系用户，十分轻量，但没法推送图片<br/>👉https://apps.apple.com/cn/app/id1403753865                                     |
+| Webhook       | webhook          |    ❌    | ⚡️通用的方式                                                                                                     |
 
 ## 开发说明
 

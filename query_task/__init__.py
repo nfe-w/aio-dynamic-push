@@ -18,5 +18,5 @@ def get_query_task(config):
         return QueryDouyin(config)
     if task_type == "demo":
         return QueryDemo(config)
-    else:
-        raise ValueError(f"不支持的查询任务: {task_type}")
+
+    raise ValueError(f"不支持的查询任务: {task_type}")

@@ -29,5 +29,5 @@ def get_push_channel(config):
         return Webhook(config)
     if channel_type == "demo":
         return Demo(config)
-    else:
-        raise ValueError(f"不支持的通道类型: {channel_type}")
+
+    raise ValueError(f"不支持的通道类型: {channel_type}")
