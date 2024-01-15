@@ -42,7 +42,7 @@ class QueryWeibo(QueryTask):
             result = json.loads(str(response.content, "utf-8"))
             cards = result["data"]["cards"]
             if len(cards) == 0:
-                log.info(f"【微博-查询动态状态-{self.name}】【{uid}】动态列表为空")
+                log.debug(f"【微博-查询动态状态-{self.name}】【{uid}】动态列表为空")
                 return
 
             card = cards[0]

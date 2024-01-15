@@ -51,7 +51,7 @@ class QueryBilibili(QueryTask):
             else:
                 data = result["data"]
                 if len(data["cards"]) == 0:
-                    log.info(f"【B站-查询动态状态-{self.name}】【{uid}】动态列表为空")
+                    log.debug(f"【B站-查询动态状态-{self.name}】【{uid}】动态列表为空")
                     return
 
                 item = data["cards"][0]
