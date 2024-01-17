@@ -30,7 +30,7 @@ class QueryBilibili(QueryTask):
                 if self.enable_living_check:
                     self.query_live_status_batch(self.uid_list)
         except Exception as e:
-            log.error(f"【B站-查询任务-{self.name}】出错：{e}")
+            log.error(f"【B站-查询任务-{self.name}】出错：{e}", exc_info=True)
 
     def query_dynamic(self, uid=None):
         if uid is None:

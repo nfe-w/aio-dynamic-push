@@ -17,6 +17,8 @@ class FeishuApps(PushChannel):
         self.app_secret = str(config.get("app_secret", ""))
         self.receive_id_type = str(config.get("receive_id_type", ""))
         self.receive_id = str(config.get("receive_id", ""))
+        if self.app_id == "" or self.app_secret == "" or self.receive_id_type == "" or self.receive_id == "":
+            log.error(f"【推送_{self.name}】配置不完整，推送功能将无法正常使用")
 
     def push(self, title, content, jump_url=None, pic_url=None):
         tenant_access_token = self._get_tenant_access_token()

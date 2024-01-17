@@ -23,4 +23,7 @@ class QueryTask(object):
             if target_push_channel is None:
                 log.error(f"【{self.type}】推送通道【{item}】不存在")
             else:
-                target_push_channel.push(title, content, jump_url, pic_url)
+                try:
+                    target_push_channel.push(title, content, jump_url, pic_url)
+                except Exception as e:
+                    log.error(f"【{self.type}】推送通道【{item}】出错：{e}", exc_info=True)

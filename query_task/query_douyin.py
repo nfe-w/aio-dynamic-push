@@ -38,7 +38,7 @@ class QueryDouyin(QueryTask):
                     for douyin_id in self.douyin_id_list:
                         self.query_live_status_v2(douyin_id)
         except Exception as e:
-            log.error(f"【抖音-查询任务-{self.name}】出错：{e}")
+            log.error(f"【抖音-查询任务-{self.name}】出错：{e}", exc_info=True)
 
     def get_signature(self):
         # noinspection PyBroadException

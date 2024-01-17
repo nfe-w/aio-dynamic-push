@@ -29,7 +29,7 @@ class QueryXhs(QueryTask):
                     for profile_id in self.profile_id_list:
                         self.query_dynamic(profile_id)
         except Exception as e:
-            log.error(f"【小红书-查询任务-{self.name}】出错：{e}")
+            log.error(f"【小红书-查询任务-{self.name}】出错：{e}", exc_info=True)
 
     def query_dynamic(self, profile_id=None):
         if profile_id is None:

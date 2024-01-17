@@ -29,7 +29,7 @@ class QueryWeibo(QueryTask):
                     for uid in self.uid_list:
                         self.query_dynamic(uid)
         except Exception as e:
-            log.error(f"【微博-查询任务-{self.name}】出错：{e}")
+            log.error(f"【微博-查询任务-{self.name}】出错：{e}", exc_info=True)
 
     def query_dynamic(self, uid=None):
         if uid is None:

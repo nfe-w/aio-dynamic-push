@@ -8,6 +8,8 @@ class Webhook(PushChannel):
         super().__init__(config)
         self.webhook_url = str(config.get("webhook_url", ""))
         self.request_method = str(config.get("request_method", "GET")).upper()
+        if self.webhook_url == "":
+            log.error(f"【推送_{self.name}】配置不完整，推送功能将无法正常使用")
 
     def push(self, title, content, jump_url=None, pic_url=None):
         if not self.webhook_url:

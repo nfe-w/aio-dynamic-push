@@ -66,7 +66,7 @@ def requests_get(url, module_name="未指定", headers=None, params=None, use_pr
     try:
         response = requests.get(url, headers=headers, params=params, proxies=proxies, timeout=10)
     except Exception as e:
-        log.error(f"【{module_name}】：{e}")
+        log.error(f"【{module_name}】：{e}", exc_info=True)
         return None
     return response
 
@@ -81,7 +81,7 @@ def requests_post(url, module_name="未指定", headers=None, params=None, data=
     try:
         response = requests.post(url, headers=headers, params=params, data=data, json=json, proxies=proxies, timeout=10)
     except Exception as e:
-        log.error(f"【{module_name}】：{e}")
+        log.error(f"【{module_name}】：{e}", exc_info=True)
         return None
     return response
 

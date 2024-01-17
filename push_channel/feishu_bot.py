@@ -9,6 +9,8 @@ class FeishuBot(PushChannel):
     def __init__(self, config):
         super().__init__(config)
         self.webhook_key = str(config.get("webhook_key", ""))
+        if self.webhook_key == "":
+            log.error(f"【推送_{self.name}】配置不完整，推送功能将无法正常使用")
 
     def push(self, title, content, jump_url=None, pic_url=None):
         push_url = f"https://open.feishu.cn/open-apis/bot/v2/hook/{self.webhook_key}"

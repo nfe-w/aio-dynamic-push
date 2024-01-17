@@ -7,6 +7,8 @@ class ServerChanTurbo(PushChannel):
     def __init__(self, config):
         super().__init__(config)
         self.send_key = str(config.get("send_key", ""))
+        if self.send_key == "":
+            log.error(f"【推送_{self.name}】配置不完整，推送功能将无法正常使用")
 
     def push(self, title, content, jump_url=None, pic_url=None):
         push_url = f"https://sctapi.ftqq.com/{self.send_key}.send"
