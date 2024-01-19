@@ -14,6 +14,10 @@ class QueryTask(object):
         self.enable_dynamic_check = config.get("enable_dynamic_check", False)
         self.enable_living_check = config.get("enable_living_check", False)
 
+        self.len_of_deque = 20
+        self.dynamic_dict = {}
+        self.living_status_dict = {}
+
     def query(self):
         raise NotImplementedError("Subclasses must implement the query method")
 

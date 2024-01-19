@@ -20,10 +20,6 @@ class QueryDouyin(QueryTask):
         self.sec_uid_list = config.get("sec_uid_list", [])
         self.douyin_id_list = config.get("douyin_id_list", [])
 
-        self.dynamic_dict = {}
-        self.living_status_dict = {}
-        self.len_of_deque = 20
-
     def query(self):
         if not self.enable:
             return

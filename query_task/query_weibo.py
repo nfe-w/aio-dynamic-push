@@ -15,9 +15,6 @@ class QueryWeibo(QueryTask):
         super().__init__(config)
         self.uid_list = config.get("uid_list", [])
 
-        self.dynamic_dict = {}
-        self.len_of_deque = 50
-
     def query(self):
         if not self.enable:
             return

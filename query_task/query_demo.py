@@ -11,9 +11,6 @@ class QueryDemo(QueryTask):
         # 在这里初始化任务需要的参数
         self.uid_list = config.get("uid_list", [])
 
-        self.dynamic_dict = {}
-        self.len_of_deque = 50
-
     def query(self):
         if not self.enable:
             return
