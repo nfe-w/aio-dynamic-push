@@ -1,3 +1,5 @@
+from collections import deque
+
 import push_channel
 from common.logger import log
 
@@ -20,6 +22,32 @@ class QueryTask(object):
 
     def query(self):
         raise NotImplementedError("Subclasses must implement the query method")
+
+    def handle_for_result_null(self, null_id="-1", dict_key=None, module_name="未指定", user_name=None):
+        """
+        对动态状态请求返回为空时进行特殊处理
+        :param null_id: 用于占位的id
+        :param dict_key: dynamic_dict的key，通常为用户id
+        :param module_name: 用于日志输出的模块名
+        :param user_name: 用于日志输出的用户名或id
+        """
+        if dict_key is None:
+            log.error(f"{module_name}，handle_for_result_null，参数dynamic_dict_key不能为空")
+        if user_name is None:
+            user_name = dict_key
+
+        if self.dynamic_dict.get(dict_key, None) is None:
+            # 当 dynamic_dict 中无 dict_key 时，证明是第一次请求且用户没发布过动态，进行初始化
+            self.dynamic_dict[dict_key] = deque(maxlen=self.len_of_deque)
+            self.dynamic_dict[dict_key].append(null_id)
+            log.info(f"【{module_name}-查询动态状态-{self.name}】【{user_name}】动态初始化：{self.dynamic_dict[dict_key]}")
+        else:
+            # 当 dynamic_dict 中有 dict_key 时，检测 deque 的第一个元素是不是 null_id
+            previous_id = self.dynamic_dict[dict_key].pop()
+            self.dynamic_dict[dict_key].append(previous_id)
+            if previous_id != null_id:
+                # 当第一个元素不是 null_id 时，代表用户已经发布过动态了，此时可能是请求被拦截；否则代表用户持续没有发布动态
+                log.error(f"【{module_name}-查询动态状态-{self.name}】【{user_name}】动态列表为空")
 
     def push(self, title, content, jump_url=None, pic_url=None):
         for item in self.target_push_name_list:

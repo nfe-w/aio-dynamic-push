@@ -57,7 +57,7 @@ class QueryDouyin(QueryTask):
             else:
                 aweme_list = result["aweme_list"]
                 if len(aweme_list) == 0:
-                    log.debug(f"【抖音-查询动态状态-{self.name}】【{nickname}】动态列表为空")
+                    super().handle_for_result_null("-1", sec_uid, "抖音", nickname)
                     return
 
                 aweme = aweme_list[0]

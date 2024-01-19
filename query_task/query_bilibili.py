@@ -46,8 +46,8 @@ class QueryBilibili(QueryTask):
                 log.error(f"【B站-查询动态状态-{self.name}】请求返回数据code错误：{result['code']}")
             else:
                 data = result["data"]
-                if len(data["cards"]) == 0:
-                    log.debug(f"【B站-查询动态状态-{self.name}】【{uid}】动态列表为空")
+                if 'cards' not in data or len(data["cards"]) == 0:
+                    super().handle_for_result_null(-1, uid, "B站", uid)
                     return
 
                 item = data["cards"][0]

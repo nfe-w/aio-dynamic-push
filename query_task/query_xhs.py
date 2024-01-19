@@ -54,7 +54,7 @@ class QueryXhs(QueryTask):
                 user_name = result["user"]["userPageData"]["basicInfo"]["nickname"]
                 notes = result["user"]["notes"][0]
                 if len(notes) == 0:
-                    log.debug(f"【小红书-查询动态状态-{self.name}】【{user_name}】动态列表为空")
+                    super().handle_for_result_null("-1", profile_id, "小红书", user_name)
                     return
 
                 note = notes[0]
