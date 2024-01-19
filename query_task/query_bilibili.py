@@ -124,6 +124,8 @@ class QueryBilibili(QueryTask):
                 log.error(f"【B站-查询直播状态-{self.name}】请求返回数据code错误：{result['code']}")
             else:
                 live_status_list = result["data"]
+                if len(live_status_list) == 0:
+                    return
                 for uid, item_info in live_status_list.items():
                     try:
                         uname = item_info["uname"]
