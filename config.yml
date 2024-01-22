@@ -128,11 +128,23 @@ push_channel:
     type: feishu_bot
     # 飞书机器人webhook key，如果启动该推送则必填
     webhook_key:
+  - name: 推送通道_Telegram机器人
+    enable: false
+    type: telegram_bot
+    # Telegram 机器人的token，如果启动该推送则必填
+    api_token:
+    # Telegram 机器人的chat_id，如果启动该推送则必填，详见 https://api.telegram.org/bot<YOUR_API_TOKEN>/getUpdates
+    chat_id:
   - name: 推送通道_Bark
     enable: false
     type: bark
     # iOS 设备专用，Bark app 的key，如果启动该推送则必填
     key:
+  - name: 推送通道_Gotify
+    enable: false
+    type: gotify
+    # Gotify 服务器地址，如果启动该推送则必填，例如 https://push.example.com/message?token=<apptoken>
+    web_server_url:
   - name: 推送通道_Webhook
     enable: false
     type: webhook
@@ -140,3 +152,20 @@ push_channel:
     webhook_url: https://xxx.com?title={{title}}&content={{content}}
     # 请求方法，GET/POST
     request_method: GET
+  - name: 推送通道_Email
+    enable: false
+    type: email
+    # SMTP 服务器地址，如果启动该推送则必填，例如 smtp.qq.com
+    smtp_host:
+    # SMTP 服务器端口，如果启动该推送则必填，例如 465
+    smtp_port:
+    # 是否启用SSL，默认true
+    smtp_ssl: true
+    # 是否启用TSL，默认false
+    smtp_tls: false
+    # 发件人邮箱，如果启动该推送则必填
+    sender_email:
+    # 发件人密码，如果启动该推送则必填，QQ邮箱需要使用授权码，参考 https://service.mail.qq.com/detail/0/75
+    sender_password:
+    # 收件人地址，如果启动该推送则必填，多个地址用英文逗号分隔
+    receiver_email:
