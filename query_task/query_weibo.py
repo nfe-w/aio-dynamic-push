@@ -42,20 +42,14 @@ class QueryWeibo(QueryTask):
                 super().handle_for_result_null("-1", uid, "微博", uid)
                 return
 
+            # 循环遍历 cards ，剔除不满足要求的数据
+            cards = [card for card in cards if
+                     card.get("mblog") is not None  # 跳过不包含 mblog 的数据
+                     and card["mblog"].get("isTop", None) != 1  # 跳过置顶
+                     and card["mblog"].get("mblogtype", None) != 2  # 跳过置顶
+                     ]
+
             card = cards[0]
-
-            # 跳过置顶
-            if card["mblog"].get("isTop", None) == 1 or card["mblog"].get("mblogtype", None) == 2:
-                # 如果只有置顶，则跳过
-                if len(cards) == 1:
-                    return
-                card = cards[1]
-                # 新版微博支持两个置顶
-                if card["mblog"].get("isTop", None) == 1 or card["mblog"].get("mblogtype", None) == 2:
-                    if len(cards) == 2:
-                        return
-                    card = cards[2]
-
             mblog = card["mblog"]
             mblog_id = mblog["id"]
             user = mblog["user"]
