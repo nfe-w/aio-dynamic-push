@@ -34,8 +34,10 @@ class QueryBilibili(QueryTask):
         except Exception as e:
             log.error(f"【B站-查询任务-{self.name}】出错：{e}", exc_info=True)
 
-    def init_buvid3(self):
-        buvid3 = get_cached_value("buvid3")
+    def init_buvid3(self, get_from_cache=True):
+        buvid3 = None
+        if get_from_cache:
+            buvid3 = get_cached_value("buvid3")
         if buvid3 is None:
             buvid3 = self.get_new_buvid3()
             set_cached_value("buvid3", buvid3)
@@ -48,10 +50,16 @@ class QueryBilibili(QueryTask):
             'content-type': 'application/json;charset=UTF-8',
             'cookie': f'buvid3={buvid3};'
         }
-        payload = self.payload
+        payload = json.dumps({"payload": self.payload})
         response = util.requests_post(url, f"B站-查询动态状态-激活buvid3-{self.name}", headers=headers, data=payload, use_proxy=True)
-        if util.check_response_is_ok(response) and response.json().get("code", -1) == 0:
-            log.info(f"【B站-查询动态状态-激活buvid3-{self.name}】激活成功")
+        if util.check_response_is_ok(response):
+            data = response.json()
+            code = data.get("code", -1)
+            message = data.get("message", "")
+            if code == 0:
+                log.info(f"【B站-查询动态状态-激活buvid3-{self.name}】激活成功")
+            else:
+                log.error(f"【B站-查询动态状态-激活buvid3-{self.name}】激活失败, code：{code}, message: {message}")
         else:
             log.error(f"【B站-查询动态状态-激活buvid3-{self.name}】激活失败")
         return buvid3
@@ -71,7 +79,7 @@ class QueryBilibili(QueryTask):
             return buvid3
         return None
 
-    def query_dynamic_v2(self, uid=None):
+    def query_dynamic_v2(self, uid=None, is_retry_by_buvid3=False):
         if uid is None:
             return
         uid = str(uid)
@@ -92,10 +100,13 @@ class QueryBilibili(QueryTask):
             if result["code"] != 0:
                 log.error(f"【B站-查询动态状态-{self.name}】请求返回数据code错误：{result['code']}")
                 if result["code"] == -352:
-                    self.init_buvid3()
+                    if is_retry_by_buvid3 is True:
+                        log.error(f"【B站-查询动态状态-{self.name}】已经重试获取了【{uid}】，但依然失败")
+                        return
+                    self.init_buvid3(get_from_cache=False)
                     log.info(f"【B站-查询动态状态-{self.name}】重新获取到了buvid3：{self.buvid3}")
                     log.info(f"【B站-查询动态状态-{self.name}】重试获取【{uid}】的动态")
-                    self.query_dynamic_v2(uid)
+                    self.query_dynamic_v2(uid, is_retry_by_buvid3=True)
             else:
                 data = result["data"]
                 if "items" not in data or data["items"] is None or len(data["items"]) == 0:
