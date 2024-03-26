@@ -12,6 +12,7 @@ class QueryBilibili(QueryTask):
     def __init__(self, config):
         super().__init__(config)
         self.uid_list = config.get("uid_list", [])
+        self.cookie = config.get("cookie", "")
 
     def query(self):
         if not self.enable:
@@ -22,19 +23,21 @@ class QueryBilibili(QueryTask):
                 my_proxy.current_proxy_ip = my_proxy.get_proxy(proxy_check_url="http://api.bilibili.com/x/space/acc/info")
                 if self.enable_dynamic_check:
                     for uid in self.uid_list:
-                        self.query_dynamic(uid)
+                        self.query_dynamic_v2(uid)
                 if self.enable_living_check:
                     self.query_live_status_batch(self.uid_list)
         except Exception as e:
             log.error(f"【B站-查询任务-{self.name}】出错：{e}", exc_info=True)
 
-    def query_dynamic(self, uid=None):
+    def query_dynamic_v2(self, uid=None):
         if uid is None:
             return
         uid = str(uid)
-        query_url = (f"http://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history"
-                     f"?host_uid={uid}&offset_dynamic_id=0&need_top=0&platform=web&my_ts={int(time.time())}")
+        query_url = (f"https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space"
+                     f"?host_mid={uid}&offset=&my_ts={int(time.time())}")
         headers = self.get_headers(uid)
+        if self.cookie != "":
+            headers["cookie"] = self.cookie
         response = util.requests_get(query_url, f"B站-查询动态状态-{self.name}", headers=headers, use_proxy=True)
         if util.check_response_is_ok(response):
             try:
@@ -46,7 +49,96 @@ class QueryBilibili(QueryTask):
                 log.error(f"【B站-查询动态状态-{self.name}】请求返回数据code错误：{result['code']}")
             else:
                 data = result["data"]
-                if 'cards' not in data or len(data["cards"]) == 0:
+                if "items" not in data or data["items"] is None or len(data["items"]) == 0:
+                    super().handle_for_result_null(-1, uid, "B站", uid)
+                    return
+
+                items = data["items"]
+                # 循环遍历 items ，剔除不满足要求的数据
+                items = [item for item in items if
+                         (item["modules"].get("module_tag", None) is None or item["modules"].get("module_tag").get("text", None) != "置顶")  # 跳过置顶
+                         ]
+
+                item = items[0]
+                dynamic_id = item["id_str"]
+                try:
+                    uname = item["modules"]["module_author"]["name"]
+                except KeyError:
+                    log.error(f"【B站-查询动态状态-{self.name}】【{uid}】获取不到uname")
+                    return
+
+                if self.dynamic_dict.get(uid, None) is None:
+                    self.dynamic_dict[uid] = deque(maxlen=self.len_of_deque)
+                    for index in range(self.len_of_deque):
+                        if index < len(items):
+                            self.dynamic_dict[uid].appendleft(items[index]["id_str"])
+                    log.info(f"【B站-查询动态状态-{self.name}】【{uname}】动态初始化：{self.dynamic_dict[uid]}")
+                    return
+
+                if dynamic_id not in self.dynamic_dict[uid]:
+                    previous_dynamic_id = self.dynamic_dict[uid].pop()
+                    self.dynamic_dict[uid].append(previous_dynamic_id)
+                    log.info(f"【B站-查询动态状态-{self.name}】【{uname}】上一条动态id[{previous_dynamic_id}]，本条动态id[{dynamic_id}]")
+                    self.dynamic_dict[uid].append(dynamic_id)
+                    log.debug(self.dynamic_dict[uid])
+
+                    dynamic_type = item["type"]
+                    if dynamic_type not in ["DYNAMIC_TYPE_DRAW", "DYNAMIC_TYPE_WORD", "DYNAMIC_TYPE_AV", "DYNAMIC_TYPE_ARTICLE"]:
+                        log.info(f"【B站-查询动态状态-{self.name}】【{uname}】动态有更新，但不在需要推送的动态类型列表中，dynamic_type->{dynamic_type}")
+                        return
+
+                    timestamp = item["modules"]["module_author"]["pub_ts"]
+                    dynamic_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(timestamp))
+                    module_dynamic = item["modules"]["module_dynamic"]
+
+                    content = None
+                    pic_url = None
+                    title_msg = "发动态了"
+                    if dynamic_type == "DYNAMIC_TYPE_FORWARD":
+                        # 转发动态
+                        content = module_dynamic["desc"]["text"]
+                        title_msg = "转发了动态"
+                    elif dynamic_type == "DYNAMIC_TYPE_DRAW":
+                        # 带图动态
+                        content = module_dynamic["major"]["opus"]["summary"]["text"]
+                        pic_url = module_dynamic["major"]["opus"]["pics"][0]["url"]
+                    elif dynamic_type == "DYNAMIC_TYPE_WORD":
+                        # 纯文字动态
+                        content = module_dynamic["major"]["opus"]["summary"]["text"]
+                    elif dynamic_type == "DYNAMIC_TYPE_AV":
+                        # 投稿视频
+                        content = module_dynamic["major"]["archive"]["title"]
+                        pic_url = module_dynamic["major"]["archive"]["cover"]
+                        title_msg = "投稿了"
+                    elif dynamic_type == "DYNAMIC_TYPE_ARTICLE":
+                        # 投稿专栏
+                        content = module_dynamic["major"]["opus"]["title"]
+                        pic_url = module_dynamic["major"]["opus"]["pics"][0]["url"]
+                    log.info(f"【B站-查询动态状态-{self.name}】【{uname}】动态有更新，准备推送：{content[:30]}")
+                    self.push_for_bili_dynamic(uname, dynamic_id, content, pic_url, dynamic_type, dynamic_time, title_msg)
+
+    @DeprecationWarning
+    def query_dynamic(self, uid=None):
+        if uid is None:
+            return
+        uid = str(uid)
+        query_url = (f"http://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history"
+                     f"?host_uid={uid}&offset_dynamic_id=0&need_top=0&platform=web&my_ts={int(time.time())}")
+        headers = self.get_headers(uid)
+        if self.cookie != "":
+            headers["cookie"] = self.cookie
+        response = util.requests_get(query_url, f"B站-查询动态状态-{self.name}", headers=headers, use_proxy=True)
+        if util.check_response_is_ok(response):
+            try:
+                result = json.loads(str(response.content, "utf-8"))
+            except UnicodeDecodeError:
+                log.error(f"【B站-查询动态状态-{self.name}】【{uid}】解析content出错")
+                return
+            if result["code"] != 0:
+                log.error(f"【B站-查询动态状态-{self.name}】请求返回数据code错误：{result['code']}")
+            else:
+                data = result["data"]
+                if 'cards' not in data or data["cards"] is None or len(data["cards"]) == 0:
                     super().handle_for_result_null(-1, uid, "B站", uid)
                     return
 
@@ -86,9 +178,11 @@ class QueryBilibili(QueryTask):
 
                     content = None
                     pic_url = None
+                    title_msg = "发动态了"
                     if dynamic_type == 1:
                         # 转发动态
                         content = card["item"]["content"]
+                        title_msg = "转发了动态"
                     elif dynamic_type == 2:
                         # 图文动态
                         content = card["item"]["description"]
@@ -100,12 +194,13 @@ class QueryBilibili(QueryTask):
                         # 投稿动态
                         content = card["title"]
                         pic_url = card["pic"]
+                        title_msg = "投稿了"
                     elif dynamic_type == 64:
                         # 专栏动态
                         content = card["title"]
                         pic_url = card["image_urls"][0]
                     log.info(f"【B站-查询动态状态-{self.name}】【{uname}】动态有更新，准备推送：{content[:30]}")
-                    self.push_for_bili_dynamic(uname, dynamic_id, content, pic_url, dynamic_type, dynamic_time)
+                    self.push_for_bili_dynamic(uname, dynamic_id, content, pic_url, dynamic_type, dynamic_time, title_msg)
 
     def query_live_status_batch(self, uid_list=None):
         if uid_list is None:
@@ -114,6 +209,8 @@ class QueryBilibili(QueryTask):
             return
         query_url = "https://api.live.bilibili.com/room/v1/Room/get_status_info_by_uids"
         headers = self.get_headers(uid_list[0])
+        if self.cookie != "":
+            headers["cookie"] = self.cookie
         data = json.dumps({
             "uids": list(map(int, uid_list))
         })
@@ -165,7 +262,7 @@ class QueryBilibili(QueryTask):
             "sec-fetch-site": "same-site",
         }
 
-    def push_for_bili_dynamic(self, uname=None, dynamic_id=None, content=None, pic_url=None, dynamic_type=None, dynamic_time=None):
+    def push_for_bili_dynamic(self, uname=None, dynamic_id=None, content=None, pic_url=None, dynamic_type=None, dynamic_time=None, title_msg='发动态了'):
         """
         B站动态提醒推送
         :param uname: up主名字
@@ -174,16 +271,12 @@ class QueryBilibili(QueryTask):
         :param pic_url: 动态图片
         :param dynamic_type: 动态类型
         :param dynamic_time: 动态发送时间
+        :param title_msg: 推送标题
         """
         if uname is None or dynamic_id is None or content is None:
             log.error(f"【B站-动态提醒推送-{self.name}】缺少参数，uname:[{uname}]，dynamic_id:[{dynamic_id}]，content:[{content[:30]}]")
             return
 
-        title_msg = "发动态了"
-        if dynamic_type == 1:
-            title_msg = "转发了动态"
-        elif dynamic_type == 8:
-            title_msg = "投稿了"
         title = f"【B站】【{uname}】{title_msg}"
         content = f"{content[:100] + (content[100:] and '...')}[{dynamic_time}]"
         dynamic_url = f"https://www.bilibili.com/opus/{dynamic_id}"

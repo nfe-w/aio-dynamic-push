@@ -35,6 +35,8 @@ query_task:
       - 1875044092
       - 1811071010
       - 2018113152
+    # cookie，可以一定程度防ban，建议用小号的，貌似无痕窗口不登录时拿到的cookie也能用
+    cookie: ""
   - name: 任务_weibo
     enable: false
     type: weibo
