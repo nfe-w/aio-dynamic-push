@@ -3,6 +3,7 @@ import time
 from collections import deque
 
 from common import util
+from common.cache import set_cached_value, get_cached_value
 from common.logger import log
 from common.proxy import my_proxy
 from query_task import QueryTask
@@ -13,21 +14,62 @@ class QueryBilibili(QueryTask):
         super().__init__(config)
         self.uid_list = config.get("uid_list", [])
         self.cookie = config.get("cookie", "")
+        self.payload = config.get("payload", "")
+        self.buvid3 = None
 
     def query(self):
         if not self.enable:
             return
         try:
+            self.init_buvid3()
             current_time = time.strftime("%H:%M", time.localtime(time.time()))
             if self.begin_time <= current_time <= self.end_time:
                 my_proxy.current_proxy_ip = my_proxy.get_proxy(proxy_check_url="http://api.bilibili.com/x/space/acc/info")
                 if self.enable_dynamic_check:
                     for uid in self.uid_list:
                         self.query_dynamic_v2(uid)
+                        time.sleep(1)
                 if self.enable_living_check:
                     self.query_live_status_batch(self.uid_list)
         except Exception as e:
             log.error(f"【B站-查询任务-{self.name}】出错：{e}", exc_info=True)
+
+    def init_buvid3(self):
+        buvid3 = get_cached_value("buvid3")
+        if buvid3 is None:
+            buvid3 = self.get_new_buvid3()
+            set_cached_value("buvid3", buvid3)
+        self.buvid3 = buvid3
+
+    def get_new_buvid3(self):
+        buvid3 = self.generate_buvid3()
+        url = "https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi"
+        headers = {
+            'content-type': 'application/json;charset=UTF-8',
+            'cookie': f'buvid3={buvid3};'
+        }
+        payload = self.payload
+        response = util.requests_post(url, f"B站-查询动态状态-激活buvid3-{self.name}", headers=headers, data=payload, use_proxy=True)
+        if util.check_response_is_ok(response) and response.json().get("code", -1) == 0:
+            log.info(f"【B站-查询动态状态-激活buvid3-{self.name}】激活成功")
+        else:
+            log.error(f"【B站-查询动态状态-激活buvid3-{self.name}】激活失败")
+        return buvid3
+
+    def generate_buvid3(self):
+        url = "https://api.bilibili.com/x/frontend/finger/spi"
+        headers = {}
+        response = util.requests_get(url, f"B站-查询动态状态-spi-{self.name}", headers=headers, use_proxy=True)
+        if util.check_response_is_ok(response):
+            try:
+                result = json.loads(str(response.content, "utf-8"))
+            except UnicodeDecodeError:
+                log.error(f"【B站-查询动态状态-请求buvid3-{self.name}】解析content出错")
+                return
+            data = result.get("data")
+            buvid3 = data.get("b_3")
+            return buvid3
+        return None
 
     def query_dynamic_v2(self, uid=None):
         if uid is None:
@@ -36,6 +78,8 @@ class QueryBilibili(QueryTask):
         query_url = (f"https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space"
                      f"?host_mid={uid}&offset=&my_ts={int(time.time())}")
         headers = self.get_headers(uid)
+        if self.buvid3 is not None:
+            headers['cookie'] = f"buvid3={self.buvid3};"
         if self.cookie != "":
             headers["cookie"] = self.cookie
         response = util.requests_get(query_url, f"B站-查询动态状态-{self.name}", headers=headers, use_proxy=True)
@@ -47,6 +91,11 @@ class QueryBilibili(QueryTask):
                 return
             if result["code"] != 0:
                 log.error(f"【B站-查询动态状态-{self.name}】请求返回数据code错误：{result['code']}")
+                if result["code"] == -352:
+                    self.init_buvid3()
+                    log.info(f"【B站-查询动态状态-{self.name}】重新获取到了buvid3：{self.buvid3}")
+                    log.info(f"【B站-查询动态状态-{self.name}】重试获取【{uid}】的动态")
+                    self.query_dynamic_v2(uid)
             else:
                 data = result["data"]
                 if "items" not in data or data["items"] is None or len(data["items"]) == 0:
