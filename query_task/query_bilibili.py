@@ -100,11 +100,11 @@ class QueryBilibili(QueryTask):
                         title_msg = "转发了动态"
                     elif dynamic_type == "DYNAMIC_TYPE_DRAW":
                         # 带图动态
-                        content = module_dynamic["major"]["opus"]["summary"]["text"]
-                        pic_url = module_dynamic["major"]["opus"]["pics"][0]["url"]
+                        content = module_dynamic["desc"]["text"]
+                        pic_url = module_dynamic["major"]["draw"]["items"][0]["src"]
                     elif dynamic_type == "DYNAMIC_TYPE_WORD":
                         # 纯文字动态
-                        content = module_dynamic["major"]["opus"]["summary"]["text"]
+                        content = module_dynamic["desc"]["text"]
                     elif dynamic_type == "DYNAMIC_TYPE_AV":
                         # 投稿视频
                         content = module_dynamic["major"]["archive"]["title"]
