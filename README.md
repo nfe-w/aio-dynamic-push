@@ -23,7 +23,7 @@
 docker run -d -v [配置文件的绝对路径]/config.yml:/mnt/config.yml nfew/aio-dynamic-push:latest
 ```
 
-## 配置文件 config.yml 说明
+## 配置文件 [config.yml](./config.yml) 说明
 
 (1)`common`下的参数
 

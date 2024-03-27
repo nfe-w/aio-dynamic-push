@@ -8,7 +8,8 @@ def set_cached_value(key, value):
     local_cache[key] = value
 
 
-def get_cached_value(key):
+def get_cached_value(key, need_log=False):
     value = local_cache.get(key)
-    log.info(f"[本地缓存]从缓存中获取: {key} -> {value}")
+    if need_log is True:
+        log.info(f"[本地缓存]从缓存中获取: {key} -> {value}")
     return value

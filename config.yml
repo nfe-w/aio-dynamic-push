@@ -38,7 +38,7 @@ query_task:
     # 如果请求提示 -352, 可以填入下面两项之一, 建议使用 payload 自动获取buvid3
     # cookie，可以一定程度防ban，建议用小号的，貌似无痕窗口不登录时拿到的cookie也能用，优先级高于自动获取buvid3
     cookie: ""
-    # 浏览器指纹，取自于 https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi 接口，用于自动获取并激活buvid3
+    # 浏览器指纹，取自于 /x/internal/gaia-gateway/ExClimbWuzhi 接口的body，需要填入的是payload参数的value，用于自动获取并激活buvid3
     payload: ""
   - name: 任务_weibo
     enable: false
