@@ -1,5 +1,6 @@
 beautifulsoup4==4.9.3
+fake-useragent==1.5.1
 PyYAML==6.0.1
-requests==2.27.1
+requests==2.31.0
 requests_toolbelt==1.0.0
 schedule==1.2.1
