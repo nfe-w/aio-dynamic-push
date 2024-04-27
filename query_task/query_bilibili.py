@@ -119,6 +119,11 @@ class QueryBilibili(QueryTask):
                          (item["modules"].get("module_tag", None) is None or item["modules"].get("module_tag").get("text", None) != "置顶")  # 跳过置顶
                          ]
 
+                # 跳过置顶后再判断一下，防止越界
+                if len(data["items"]) == 0:
+                    super().handle_for_result_null(-1, uid, "B站", uid)
+                    return
+
                 item = items[0]
                 dynamic_id = item["id_str"]
                 try:

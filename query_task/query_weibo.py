@@ -49,6 +49,11 @@ class QueryWeibo(QueryTask):
                      and card["mblog"].get("mblogtype", None) != 2  # 跳过置顶
                      ]
 
+            # 跳过置顶后再判断一下，防止越界
+            if len(cards) == 0:
+                super().handle_for_result_null("-1", uid, "微博", uid)
+                return
+
             card = cards[0]
             mblog = card["mblog"]
             mblog_id = mblog["id"]
