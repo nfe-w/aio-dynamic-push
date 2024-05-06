@@ -1,8 +1,12 @@
 import requests
+import urllib3
 from fake_useragent import UserAgent
 
 from common.logger import log
 from common.proxy import my_proxy
+
+# 关闭ssl警告
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 ua = UserAgent(os=["macos"], min_version=120.0)
 
@@ -19,7 +23,7 @@ def requests_get(url, module_name="未指定", headers=None, params=None, use_pr
     headers.setdefault('user-agent', random_ua)
     proxies = _get_proxy() if use_proxy else None
     try:
-        response = requests.get(url, headers=headers, params=params, proxies=proxies, timeout=10)
+        response = requests.get(url, headers=headers, params=params, proxies=proxies, timeout=10, verify=False)
     except Exception as e:
         log.error(f"【{module_name}】：{e}", exc_info=True)
         return None
@@ -34,7 +38,7 @@ def requests_post(url, module_name="未指定", headers=None, params=None, data=
     headers.setdefault('user-agent', random_ua)
     proxies = _get_proxy() if use_proxy else None
     try:
-        response = requests.post(url, headers=headers, params=params, data=data, json=json, proxies=proxies, timeout=10)
+        response = requests.post(url, headers=headers, params=params, data=data, json=json, proxies=proxies, timeout=10, verify=False)
     except Exception as e:
         log.error(f"【{module_name}】：{e}", exc_info=True)
         return None

@@ -10,6 +10,7 @@ from .server_chan_turbo import ServerChanTurbo
 from .telegram_bot import TelegramBot
 from .webhook import Webhook
 from .wecom_apps import WeComApps
+from .wecom_bot import WeComBot
 
 push_channel_dict = {}
 
@@ -20,6 +21,8 @@ def get_push_channel(config):
         return ServerChanTurbo(config)
     if channel_type == "wecom_apps":
         return WeComApps(config)
+    if channel_type == "wecom_bot":
+        return WeComBot(config)
     if channel_type == "dingtalk_bot":
         return DingtalkBot(config)
     if channel_type == "feishu_apps":

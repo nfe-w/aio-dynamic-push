@@ -4,3 +4,4 @@ PyYAML==6.0.1
 requests==2.31.0
 requests_toolbelt==1.0.0
 schedule==1.2.1
+urllib3==1.26.9
