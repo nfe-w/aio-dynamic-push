@@ -112,6 +112,11 @@ push_channel:
     agent_id:
     # 应用Secret，如果启动该推送则必填
     corp_secret:
+  - name: 推送通道_企业微信机器人
+    enable: false
+    type: wecom_bot
+    # 机器人key，如果启动该推送则必填
+    key:
   - name: 推送通道_钉钉机器人
     enable: false
     type: dingtalk_bot
