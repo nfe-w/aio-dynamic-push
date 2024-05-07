@@ -75,14 +75,49 @@ class QueryXhs(QueryTask):
                     self.dynamic_dict[profile_id].append(note_id)
                     log.debug(self.dynamic_dict[profile_id])
 
-                    dynamic_time = ""
+                    note_detail_info = self.get_note_detail(note_id)
+                    if note_detail_info is None:
+                        log.error(f"【小红书-查询动态状态-{self.name}】获取不到笔记明细，不推送，note_id：{note_id}")
+                        return
+                    note_title = note_detail_info["title"]
+                    note_desc = note_detail_info["desc"]
+                    note_time_ts = note_detail_info["time"]
+                    dynamic_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(note_time_ts / 1000))
 
                     note_card = note["noteCard"]
-                    content = note_card["displayTitle"]
+                    content = f"【{note_title}】{note_desc}"
                     pic_url = note_card["cover"]["infoList"][-1]["url"]
                     jump_url = f"https://www.xiaohongshu.com/explore/{note_card['noteId']}"
                     log.info(f"【小红书-查询动态状态-{self.name}】【{user_name}】动态有更新，准备推送：{content[:30]}")
                     self.push_for_xhs_dynamic(user_name, note_id, content, pic_url, jump_url, dynamic_time)
+
+    def get_note_detail(self, note_id=None):
+        if note_id is None:
+            return None
+        query_url = f"https://www.xiaohongshu.com/explore/{note_id}"
+        headers = self.get_headers()
+        response = util.requests_get(query_url, f"小红书-查询动态明细-{self.name}", headers=headers, use_proxy=True)
+        if util.check_response_is_ok(response):
+            html_text = response.text
+            soup = BeautifulSoup(html_text, "html.parser")
+            scripts = soup.findAll("script")
+            result = None
+            for script in scripts:
+                if script.string is not None and "window.__INITIAL_STATE__=" in script.string:
+                    try:
+                        result = json.loads(script.string.replace("window.__INITIAL_STATE__=", "").replace("undefined", "null"))
+                    except TypeError:
+                        log.error(f"【小红书-查询动态明细-{self.name}】json解析错误，note_id：{note_id}")
+                        return None
+                    break
+
+            if result is None:
+                log.error(f"【小红书-查询动态明细-{self.name}】请求返回数据为空，note_id：{note_id}")
+            else:
+                note = result["note"]
+                if note is None:
+                    return None
+                return note["noteDetailMap"][note["firstNoteId"]]["note"]
 
     @staticmethod
     def get_headers():
