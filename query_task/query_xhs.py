@@ -149,6 +149,6 @@ class QueryXhs(QueryTask):
         if username is None or note_id is None or content is None:
             log.error(f"【小红书-动态提醒推送-{self.name}】缺少参数，username:[{username}]，note_id:[{note_id}]，content:[{content[:30]}]")
             return
-        title = f"【小红书】【{username}】发动态"
+        title = f"【小红书】【{username}】发动态了"
         content = f"{content[:100] + (content[100:] and '...')}[{dynamic_time}]"
         super().push(title, content, jump_url, pic_url)
