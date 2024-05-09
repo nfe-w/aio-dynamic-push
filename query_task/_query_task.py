@@ -49,13 +49,29 @@ class QueryTask(object):
                 # 当第一个元素不是 null_id 时，代表用户已经发布过动态了，此时可能是请求被拦截；否则代表用户持续没有发布动态
                 log.error(f"【{module_name}-查询动态状态-{self.name}】【{user_name}】动态列表为空")
 
-    def push(self, title, content, jump_url=None, pic_url=None):
+    def push(self, title, content, jump_url=None, pic_url=None, extend_data=None):
         for item in self.target_push_name_list:
             target_push_channel = push_channel.push_channel_dict.get(item, None)
             if target_push_channel is None:
                 log.error(f"【{self.type}】推送通道【{item}】不存在")
             else:
                 try:
-                    target_push_channel.push(title, content, jump_url, pic_url)
+                    if extend_data is None:
+                        extend_data = {}
+                    extend_data = {
+                        **extend_data,
+                        'query_task_config': {
+                            'name': self.name,
+                            'enable': self.enable,
+                            'type': self.type,
+                            'intervals_second': self.intervals_second,
+                            'begin_time': self.begin_time,
+                            'end_time': self.end_time,
+                            'target_push_name_list': self.target_push_name_list,
+                            'enable_dynamic_check': self.enable_dynamic_check,
+                            'enable_living_check': self.enable_living_check,
+                        },
+                    }
+                    target_push_channel.push(title, content, jump_url, pic_url, extend_data)
                 except Exception as e:
                     log.error(f"【{self.type}】推送通道【{item}】出错：{e}", exc_info=True)

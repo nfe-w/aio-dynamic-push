@@ -89,7 +89,7 @@ class QueryXhs(QueryTask):
                     pic_url = note_card["cover"]["infoList"][-1]["url"]
                     jump_url = f"https://www.xiaohongshu.com/explore/{note_card['noteId']}"
                     log.info(f"【小红书-查询动态状态-{self.name}】【{user_name}】动态有更新，准备推送：{content[:30]}")
-                    self.push_for_xhs_dynamic(user_name, note_id, content, pic_url, jump_url, dynamic_time)
+                    self.push_for_xhs_dynamic(user_name, note_id, content, pic_url, jump_url, dynamic_time, dynamic_raw_data=note)
 
     def get_note_detail(self, note_id=None):
         if note_id is None:
@@ -136,7 +136,7 @@ class QueryXhs(QueryTask):
             "upgrade-insecure-requests": "1"
         }
 
-    def push_for_xhs_dynamic(self, username=None, note_id=None, content=None, pic_url=None, jump_url=None, dynamic_time=None):
+    def push_for_xhs_dynamic(self, username=None, note_id=None, content=None, pic_url=None, jump_url=None, dynamic_time=None, dynamic_raw_data=None):
         """
         小红书动态提醒推送
         :param username: 博主名
@@ -145,10 +145,11 @@ class QueryXhs(QueryTask):
         :param pic_url: 图片地址
         :param jump_url: 跳转地址
         :param dynamic_time: 动态发送时间
+        :param dynamic_raw_data: 动态原始数据
         """
         if username is None or note_id is None or content is None:
             log.error(f"【小红书-动态提醒推送-{self.name}】缺少参数，username:[{username}]，note_id:[{note_id}]，content:[{content[:30]}]")
             return
         title = f"【小红书】【{username}】发动态了"
         content = f"{content[:100] + (content[100:] and '...')}[{dynamic_time}]"
-        super().push(title, content, jump_url, pic_url)
+        super().push(title, content, jump_url, pic_url, extend_data={'dynamic_raw_data': dynamic_raw_data})

@@ -55,7 +55,7 @@ docker run -d -v [配置文件的绝对路径]/config.yml:/mnt/config.yml nfew/a
 | Telegram机器人   | telegram_bot     |    ✅    | 🪜需要自备网络环境<br/>👉https://core.telegram.org/bots                                                             |
 | Bark          | bark             |    ❌    | 🍎适合苹果系用户，十分轻量，但没法推送图片<br/>👉https://apps.apple.com/cn/app/id1403753865                                     |
 | Gotify        | gotify           |    ❌    | 🖥️适合自建服务器<br/>👉https://gotify.net                                                                         |
-| Webhook       | webhook          |    ❌    | ⚡️通用的方式                                                                                                     |
+| Webhook       | webhook          | ✅(POST) | ⚡️通用的方式，请求格式详见附录                                                                                            |
 | 电子邮件          | email            |    ✅    | 📧通用的方式                                                                                                     |
 
 ## 开发说明
@@ -78,6 +78,43 @@ docker run -d -v [配置文件的绝对路径]/config.yml:/mnt/config.yml nfew/a
 #### 3.启动脚本
 
 `nohup python3 -u main.py >& aio-dynamic-push.log &`
+
+## 附录
+
+### Webhook 支持的请求格式
+
+#### GET 请求
+
+```http request
+GET https://xxx.api.com?title={{title}}&content={{content}}
+```
+
+#### POST 请求
+
+```http request
+POST https://xxx.api.com
+Content-Type: application/json
+
+{
+  "query_task_config": {
+    "name": "任务名称",
+    "enable": true,
+    "type": "bilibili/weibo/xhs/douyin",
+    "intervals_second": 600,
+    "begin_time": "00:00",
+    "end_time": "23:59",
+    "target_push_name_list": [
+      "推送通道名称"
+    ],
+    "enable_living_check": false,
+    "enable_dynamic_check": true
+  },
+  "dynamic_raw_data": {
+    "key1": "value1",
+    "key2": "value2"
+  }
+}
+```
 
 ## 声明:
 

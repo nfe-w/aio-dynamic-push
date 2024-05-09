@@ -14,7 +14,7 @@ class WeComApps(PushChannel):
         if self.corp_id == "" or self.agent_id == "" or self.corp_secret == "":
             log.error(f"【推送_{self.name}】配置不完整，推送功能将无法正常使用")
 
-    def push(self, title, content, jump_url=None, pic_url=None):
+    def push(self, title, content, jump_url=None, pic_url=None, extend_data=None):
         access_token = self._get_wechat_access_token()
         push_url = "https://qyapi.weixin.qq.com/cgi-bin/message/send"
         params = {

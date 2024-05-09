@@ -100,7 +100,7 @@ class QueryWeibo(QueryTask):
                     pic_url = mblog.get("original_pic", None)
                     jump_url = card["scheme"]
                 log.info(f"【微博-查询动态状态-{self.name}】【{screen_name}】动态有更新，准备推送：{content[:30]}")
-                self.push_for_weibo_dynamic(screen_name, mblog_id, content, pic_url, jump_url, dynamic_time)
+                self.push_for_weibo_dynamic(screen_name, mblog_id, content, pic_url, jump_url, dynamic_time, dynamic_raw_data=card)
 
     @staticmethod
     def get_headers(uid):
@@ -117,7 +117,7 @@ class QueryWeibo(QueryTask):
             "x-requested-with": "XMLHttpRequest",
         }
 
-    def push_for_weibo_dynamic(self, username=None, mblog_id=None, content=None, pic_url=None, jump_url=None, dynamic_time=None):
+    def push_for_weibo_dynamic(self, username=None, mblog_id=None, content=None, pic_url=None, jump_url=None, dynamic_time=None, dynamic_raw_data=None):
         """
         微博动态提醒推送
         :param username: 博主名
@@ -126,10 +126,11 @@ class QueryWeibo(QueryTask):
         :param pic_url: 图片地址
         :param jump_url: 跳转地址
         :param dynamic_time: 动态发送时间
+        :param dynamic_raw_data: 动态原始数据
         """
         if username is None or mblog_id is None or content is None:
             log.error(f"【微博-动态提醒推送-{self.name}】缺少参数，username:[{username}]，mblog_id:[{mblog_id}]，content:[{content[:30]}]")
             return
         title = f"【微博】【{username}】发微博了"
         content = f"{content[:100] + (content[100:] and '...')}[{dynamic_time}]"
-        super().push(title, content, jump_url, pic_url)
+        super().push(title, content, jump_url, pic_url, extend_data={'dynamic_raw_data': dynamic_raw_data})

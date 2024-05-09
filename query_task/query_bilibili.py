@@ -180,7 +180,7 @@ class QueryBilibili(QueryTask):
                         content = module_dynamic["major"]["opus"]["title"]
                         pic_url = module_dynamic["major"]["opus"]["pics"][0]["url"]
                     log.info(f"【B站-查询动态状态-{self.name}】【{uname}】动态有更新，准备推送：{content[:30]}")
-                    self.push_for_bili_dynamic(uname, dynamic_id, content, pic_url, dynamic_type, dynamic_time, title_msg)
+                    self.push_for_bili_dynamic(uname, dynamic_id, content, pic_url, dynamic_type, dynamic_time, title_msg, dynamic_raw_data=item)
 
     @DeprecationWarning
     def query_dynamic(self, uid=None):
@@ -265,7 +265,7 @@ class QueryBilibili(QueryTask):
                         content = card["title"]
                         pic_url = card["image_urls"][0]
                     log.info(f"【B站-查询动态状态-{self.name}】【{uname}】动态有更新，准备推送：{content[:30]}")
-                    self.push_for_bili_dynamic(uname, dynamic_id, content, pic_url, dynamic_type, dynamic_time, title_msg)
+                    self.push_for_bili_dynamic(uname, dynamic_id, content, pic_url, dynamic_type, dynamic_time, title_msg, dynamic_raw_data=item)
 
     def query_live_status_batch(self, uid_list=None):
         if uid_list is None:
@@ -327,7 +327,7 @@ class QueryBilibili(QueryTask):
             "sec-fetch-site": "same-site",
         }
 
-    def push_for_bili_dynamic(self, uname=None, dynamic_id=None, content=None, pic_url=None, dynamic_type=None, dynamic_time=None, title_msg='发动态了'):
+    def push_for_bili_dynamic(self, uname=None, dynamic_id=None, content=None, pic_url=None, dynamic_type=None, dynamic_time=None, title_msg='发动态了', dynamic_raw_data=None):
         """
         B站动态提醒推送
         :param uname: up主名字
@@ -337,6 +337,7 @@ class QueryBilibili(QueryTask):
         :param dynamic_type: 动态类型
         :param dynamic_time: 动态发送时间
         :param title_msg: 推送标题
+        :param dynamic_raw_data: 动态原始数据
         """
         if uname is None or dynamic_id is None or content is None:
             log.error(f"【B站-动态提醒推送-{self.name}】缺少参数，uname:[{uname}]，dynamic_id:[{dynamic_id}]，content:[{content[:30]}]")
@@ -345,7 +346,7 @@ class QueryBilibili(QueryTask):
         title = f"【B站】【{uname}】{title_msg}"
         content = f"{content[:100] + (content[100:] and '...')}[{dynamic_time}]"
         dynamic_url = f"https://www.bilibili.com/opus/{dynamic_id}"
-        super().push(title, content, dynamic_url, pic_url)
+        super().push(title, content, dynamic_url, pic_url, extend_data={'dynamic_raw_data': dynamic_raw_data})
 
     def push_for_bili_live(self, uname=None, room_id=None, room_title=None, room_cover_url=None):
         """

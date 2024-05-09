@@ -12,10 +12,10 @@ from .webhook import Webhook
 from .wecom_apps import WeComApps
 from .wecom_bot import WeComBot
 
-push_channel_dict = {}
+push_channel_dict: dict[str, PushChannel] = {}
 
 
-def get_push_channel(config):
+def get_push_channel(config) -> PushChannel:
     channel_type = config.get("type", None)
     if channel_type == "serverChan_turbo":
         return ServerChanTurbo(config)

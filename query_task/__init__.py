@@ -6,7 +6,7 @@ from .query_weibo import QueryWeibo
 from .query_xhs import QueryXhs
 
 
-def get_query_task(config):
+def get_query_task(config) -> QueryTask:
     task_type = config.get("type", None)
     if task_type == "bilibili":
         return QueryBilibili(config)

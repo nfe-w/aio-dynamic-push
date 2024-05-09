@@ -83,7 +83,7 @@ class QueryDouyin(QueryTask):
                         pic_url = aweme["video"]["cover"]["url_list"][0]
                         video_url = f"https://www.douyin.com/video/{aweme_id}"
                         log.info(f"【抖音-查询动态状态-{self.name}】【{nickname}】动态有更新，准备推送：{content[:30]}")
-                        self.push_for_douyin_dynamic(nickname, aweme_id, content, pic_url, video_url)
+                        self.push_for_douyin_dynamic(nickname, aweme_id, content, pic_url, video_url, dynamic_raw_data=aweme)
                     except AttributeError:
                         log.error(f"【抖音-查询动态状态-{self.name}】dict取值错误，nickname：{nickname}")
                         return
@@ -178,7 +178,7 @@ class QueryDouyin(QueryTask):
             "upgrade-insecure-requests": "1",
         }
 
-    def push_for_douyin_dynamic(self, nickname=None, aweme_id=None, content=None, pic_url=None, video_url=None):
+    def push_for_douyin_dynamic(self, nickname=None, aweme_id=None, content=None, pic_url=None, video_url=None, dynamic_raw_data=None):
         """
         抖音动态提醒推送
         :param nickname: 作者名
@@ -186,13 +186,14 @@ class QueryDouyin(QueryTask):
         :param content: 动态内容
         :param pic_url: 封面图片
         :param video_url: 视频地址
+        :param dynamic_raw_data: 动态原始数据
         """
         if nickname is None or aweme_id is None or content is None:
             log.error(f"【抖音-动态提醒推送-{self.name}】缺少参数，nickname:[{nickname}]，aweme_id:[{aweme_id}]，content:[{content[:30]}]")
             return
         title = f"【抖音】【{nickname}】发视频了"
         content = content[:100] + (content[100:] and "...")
-        super().push(title, content, video_url, pic_url)
+        super().push(title, content, video_url, pic_url, extend_data={'dynamic_raw_data': dynamic_raw_data})
 
     def push_for_douyin_live(self, nickname=None, room_stream_url=None, room_title=None, room_cover_url=None):
         """

@@ -30,7 +30,7 @@ class QueryDemo(QueryTask):
         # 在这里实现检测逻辑，记得要在 query_task/__init__.py 中注册任务类型
         self.push_for_xxx(username="用户名", dynamic_id="动态id", content="动态内容", pic_url="图片地址", jump_url="跳转地址", dynamic_time="动态发送时间")
 
-    def push_for_xxx(self, username=None, dynamic_id=None, content=None, pic_url=None, jump_url=None, dynamic_time=None):
+    def push_for_xxx(self, username=None, dynamic_id=None, content=None, pic_url=None, jump_url=None, dynamic_time=None, dynamic_raw_data=None):
         """
         XXX动态提醒推送
         :param username: 用户名
@@ -39,10 +39,11 @@ class QueryDemo(QueryTask):
         :param pic_url: 图片地址
         :param jump_url: 跳转地址
         :param dynamic_time: 动态发送时间
+        :param dynamic_raw_data: 动态原始数据
         """
         if username is None or dynamic_id is None or content is None:
             log.error(f"【XXX-动态提醒推送-{self.name}】缺少参数，username:[{username}]，dynamic_id:[{dynamic_id}]，content:[{content[:30]}]")
             return
         title = f"【XXX】【{username}】发动态了"
         content = f"{content[:100] + (content[100:] and '...')}[{dynamic_time}]"
-        super().push(title, content, jump_url, pic_url)
+        super().push(title, content, jump_url, pic_url, extend_data={'dynamic_raw_data': dynamic_raw_data})
