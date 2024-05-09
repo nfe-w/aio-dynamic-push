@@ -85,6 +85,7 @@ class FeishuApps(PushChannel):
 
     def _get_img_key(self, pic_url: str):
         # 下载图片
+        log.info(f"【推送_{self.name}】开始下载图片：{pic_url}")
         response = requests.get(pic_url, verify=False)
         if not util.check_response_is_ok(response):
             log.error(f"【推送_{self.name}】下载图片{pic_url}失败")
