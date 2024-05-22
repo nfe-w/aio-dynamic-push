@@ -57,6 +57,17 @@ class QueryXhs(QueryTask):
                     super().handle_for_result_null("-1", profile_id, "小红书", user_name)
                     return
 
+                # 循环遍历 notes ，剔除不满足要求的数据
+                notes = [note for note in notes if
+                         note.get("noteCard") is not None  # 跳过不包含 noteCard 的数据
+                         and (note["noteCard"].get("interactInfo") is None or note["noteCard"]["interactInfo"].get("sticky") is not True)  # 跳过置顶
+                         ]
+
+                # 跳过置顶后再判断一下，防止越界
+                if len(notes) == 0:
+                    super().handle_for_result_null("-1", profile_id, "小红书", user_name)
+                    return
+
                 note = notes[0]
                 note_id = note["id"]
 
