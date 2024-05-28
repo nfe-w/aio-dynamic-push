@@ -190,7 +190,7 @@ class QueryDouyin(QueryTask):
                             log.info(f"【抖音-查询直播状态-{self.name}】【{nickname}】开播了，准备推送：{room_title}")
                             self.push_for_douyin_live(name, query_url, room_title, room_cover_url)
 
-    def query_live_status_v3(self, user_account=None):
+    def query_live_status_v3(self, user_account=None, is_retry_by_ttwid=False):
         if user_account is None:
             return
         query_url = "https://live.douyin.com/webcast/room/web/enter/"
@@ -210,6 +210,18 @@ class QueryDouyin(QueryTask):
         }
         response = util.requests_get(query_url, f"抖音-查询直播状态-{self.name}", headers=headers, params=params, use_proxy=True)
         if util.check_response_is_ok(response):
+
+            if len(response.content) == 0:
+                log.error(f"【抖音-查询直播状态-{self.name}】请求返回数据为空，user_account：{user_account}")
+                if is_retry_by_ttwid is True:
+                    log.error(f"【抖音-查询直播状态-{self.name}】已经重试获取了ttwid【{user_account}】，但依然失败")
+                    return
+                self.init_ttwid(get_from_cache=False)
+                log.info(f"【抖音-查询直播状态-{self.name}】重新获取到了ttwid：{self.ttwid}")
+                log.info(f"【抖音-查询直播状态-{self.name}】重试获取【{user_account}】的动态")
+                self.query_live_status_v3(user_account, is_retry_by_ttwid=True)
+                return
+
             result = json.loads(str(response.content, "utf-8"))
             if result["status_code"] != 0:
                 log.error(f"【抖音-查询直播状态-{self.name}】请求返回数据code错误：{result['status_code']}，user_account：{user_account}")
