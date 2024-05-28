@@ -89,7 +89,7 @@ query_task:
       - MS4wLjABAAAA5ZrIrbgva_HMeHuNn64goOD2XYnk4ItSypgRHlbSh1c
       - MS4wLjABAAAAGeiluJjizroSmPhcNdlsS0b7M0rxi5ygfrtqdByE0FCYi__j0fS_E52uGaF7ujpn
     enable_living_check: true
-    # 抖音号列表，用于检测开播状态，如果不开启直播检测可以不填，暂不支持纯数字的抖音号
+    # 抖音号列表，用于检测开播状态，如果不开启直播检测可以不填，现已支持纯数字的抖音号
     douyin_id_list:
       - ASOULjiaran
       - Nana7mi0715
