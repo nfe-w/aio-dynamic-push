@@ -93,6 +93,20 @@ query_task:
     douyin_id_list:
       - ASOULjiaran
       - Nana7mi0715
+  - name: 任务_douyu
+    enable: false
+    type: douyu
+    intervals_second: 300
+    begin_time: "00:00"
+    end_time: "23:59"
+    target_push_name_list:
+      - 推送通道_企业微信应用
+      - 推送通道_钉钉机器人
+    enable_living_check: true
+    # 直播间号列表，用于检测开播状态，如果不开启直播检测可以不填
+    room_id_list:
+      - 307876
+      - 12306
 
 push_channel:
   # 通道名称，唯一，可自定义不要纯数字，对应 query_task 中的 target_push_name_list

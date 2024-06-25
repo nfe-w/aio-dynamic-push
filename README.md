@@ -8,6 +8,7 @@
 - [x] 微博
 - [x] 小红书
 - [x] 抖音
+- [x] 斗鱼
 
 ## 工作流程
 
@@ -39,6 +40,7 @@ docker run -d -v [配置文件的绝对路径]/config.yml:/mnt/config.yml nfew/a
 | 微博   | weibo    |  ✅   |  ❌   |
 | 小红书  | xhs      |  ✅   |  ❌   |
 | 抖音   | douyin   |  ✅   |  ✅   |
+| 斗鱼   | douyu    |  ❌   |  ✅   |
 
 (3)`push_channel`下的参数
 
