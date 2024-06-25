@@ -3,6 +3,7 @@ from .query_bilibili import QueryBilibili
 from .query_demo import QueryDemo
 from .query_douyin import QueryDouyin
 from .query_douyu import QueryDouyu
+from .query_huya import QueryHuya
 from .query_weibo import QueryWeibo
 from .query_xhs import QueryXhs
 
@@ -19,6 +20,8 @@ def get_query_task(config) -> QueryTask:
         return QueryDouyin(config)
     if task_type == "douyu":
         return QueryDouyu(config)
+    if task_type == "huya":
+        return QueryHuya(config)
     if task_type == "demo":
         return QueryDemo(config)
 
