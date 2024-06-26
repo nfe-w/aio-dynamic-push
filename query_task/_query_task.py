@@ -53,7 +53,7 @@ class QueryTask(object):
         for item in self.target_push_name_list:
             target_push_channel = push_channel.push_channel_dict.get(item, None)
             if target_push_channel is None:
-                log.error(f"【{self.type}】推送通道【{item}】不存在")
+                log.error(f"【{self.name}】推送通道【{item}】不存在")
             else:
                 try:
                     if extend_data is None:
@@ -74,4 +74,4 @@ class QueryTask(object):
                     }
                     target_push_channel.push(title, content, jump_url, pic_url, extend_data)
                 except Exception as e:
-                    log.error(f"【{self.type}】推送通道【{item}】出错：{e}", exc_info=True)
+                    log.error(f"【{self.name}】推送通道【{item}】出错：{e}", exc_info=True)
