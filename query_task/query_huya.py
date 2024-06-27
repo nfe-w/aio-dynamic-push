@@ -72,8 +72,8 @@ class QueryHuya(QueryTask):
                 self.living_status_dict[room_id] = live_status
 
                 if live_status is True:
-                    room_name = game_live_info.get('roomName')
-                    screenshot = game_live_info.get('screenshot').split('?')[0]
+                    room_name = game_live_info.get('roomName', '')
+                    screenshot = game_live_info.get('screenshot', '').split('?')[0]
                     log.info(f"【虎牙-查询直播状态-{self.name}】【{username}】开播了，准备推送：{room_name}")
                     self.push_for_huya_live(username=username, room_title=room_name, jump_url=query_url, room_cover_url=screenshot)
 

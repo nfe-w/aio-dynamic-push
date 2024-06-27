@@ -72,6 +72,8 @@ class QueryTask(object):
                             'enable_living_check': self.enable_living_check,
                         },
                     }
+                    if pic_url == '':
+                        pic_url = None
                     target_push_channel.push(title, content, jump_url, pic_url, extend_data)
                 except Exception as e:
                     log.error(f"【{self.name}】推送通道【{item}】出错：{e}", exc_info=True)
