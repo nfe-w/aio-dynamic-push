@@ -5,6 +5,10 @@ common:
     enable: false
     # ip池地址，参考 https://github.com/jhao104/proxy_pool
     proxy_pool_url: http://ip:port
+  # 推送通道
+  push_channel:
+    # 是否在项目启动时，给各通道发送一条测试消息 true/false
+    send_test_msg_when_start: false
 
 query_task:
   # 任务名称，可自定义
