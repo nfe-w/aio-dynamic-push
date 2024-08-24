@@ -39,6 +39,8 @@ query_task:
       - 1875044092
       - 1811071010
       - 2018113152
+    # 是否跳过提醒"转发"类型的动态 true/false
+    skip_forward: true
     # 如果请求提示 -352, 可以填入下面两项之一, 建议使用 payload 自动获取buvid3
     # cookie，可以一定程度防ban，建议用小号的，貌似无痕窗口不登录时拿到的cookie也能用，优先级高于自动获取buvid3
     cookie: ""

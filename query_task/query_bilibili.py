@@ -13,6 +13,7 @@ class QueryBilibili(QueryTask):
     def __init__(self, config):
         super().__init__(config)
         self.uid_list = config.get("uid_list", [])
+        self.skip_forward = config.get("skip_forward", True)
         self.cookie = config.get("cookie", "")
         self.payload = config.get("payload", "")
         self.buvid3 = None
@@ -148,7 +149,10 @@ class QueryBilibili(QueryTask):
                     log.debug(self.dynamic_dict[uid])
 
                     dynamic_type = item["type"]
-                    if dynamic_type not in ["DYNAMIC_TYPE_DRAW", "DYNAMIC_TYPE_WORD", "DYNAMIC_TYPE_AV", "DYNAMIC_TYPE_ARTICLE"]:
+                    allow_type_list = ["DYNAMIC_TYPE_DRAW", "DYNAMIC_TYPE_WORD", "DYNAMIC_TYPE_AV", "DYNAMIC_TYPE_ARTICLE"]
+                    if self.skip_forward is False:
+                        allow_type_list.append("DYNAMIC_TYPE_FORWARD")
+                    if dynamic_type not in allow_type_list:
                         log.info(f"【B站-查询动态状态-{self.name}】【{uname}】动态有更新，但不在需要推送的动态类型列表中，dynamic_type->{dynamic_type}")
                         return
 
