@@ -14,6 +14,7 @@ class QueryWeibo(QueryTask):
     def __init__(self, config):
         super().__init__(config)
         self.uid_list = config.get("uid_list", [])
+        self.cookie = config.get("cookie", "")
 
     def query(self):
         if not self.enable:
@@ -34,6 +35,8 @@ class QueryWeibo(QueryTask):
         uid = str(uid)
         query_url = f"https://m.weibo.cn/api/container/getIndex?type=uid&value={uid}&containerid=107603{uid}&count=25"
         headers = self.get_headers(uid)
+        if self.cookie != "":
+            headers["cookie"] = self.cookie
         response = util.requests_get(query_url, f"微博-查询动态状态-{self.name}", headers=headers, use_proxy=True)
         if util.check_response_is_ok(response):
             result = json.loads(str(response.content, "utf-8"))

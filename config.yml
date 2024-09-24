@@ -60,6 +60,8 @@ query_task:
     uid_list:
       - 7198559139
       - 1765893783
+    # 登录用户的cookie，用于查询"仅粉丝可见"，如果不查这类微博暂时无需配置。浏览器打开 https://m.weibo.cn 登录后，按F12刷新，在 Network 中找到任意请求，把请求头中的cookie复制过来即可
+    cookie: ""
   - name: 任务_xhs
     enable: false
     type: xhs
