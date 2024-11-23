@@ -149,9 +149,14 @@ class QueryBilibili(QueryTask):
                     log.debug(self.dynamic_dict[uid])
 
                     dynamic_type = item["type"]
-                    allow_type_list = ["DYNAMIC_TYPE_DRAW", "DYNAMIC_TYPE_WORD", "DYNAMIC_TYPE_AV", "DYNAMIC_TYPE_ARTICLE"]
+                    allow_type_list = ["DYNAMIC_TYPE_DRAW",  # 带图动态
+                                       "DYNAMIC_TYPE_WORD",  # 纯文字动态
+                                       "DYNAMIC_TYPE_AV",  # 投稿视频
+                                       "DYNAMIC_TYPE_ARTICLE",  # 投稿专栏
+                                       "DYNAMIC_TYPE_COMMON_SQUARE"  # 装扮
+                                       ]
                     if self.skip_forward is False:
-                        allow_type_list.append("DYNAMIC_TYPE_FORWARD")
+                        allow_type_list.append("DYNAMIC_TYPE_FORWARD")  # 动态转发
                     if dynamic_type not in allow_type_list:
                         log.info(f"【B站-查询动态状态-{self.name}】【{uname}】动态有更新，但不在需要推送的动态类型列表中，dynamic_type->{dynamic_type}")
                         return
@@ -183,6 +188,9 @@ class QueryBilibili(QueryTask):
                         # 投稿专栏
                         content = module_dynamic["major"]["opus"]["title"]
                         pic_url = module_dynamic["major"]["opus"]["pics"][0]["url"]
+                    elif dynamic_type == "DYNAMIC_TYPE_COMMON_SQUARE":
+                        # 装扮
+                        content = module_dynamic["desc"]["text"]
                     log.info(f"【B站-查询动态状态-{self.name}】【{uname}】动态有更新，准备推送：{content[:30]}")
                     self.push_for_bili_dynamic(uname, dynamic_id, content, pic_url, dynamic_type, dynamic_time, title_msg, dynamic_raw_data=item)
 
