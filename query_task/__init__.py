@@ -7,22 +7,20 @@ from .query_huya import QueryHuya
 from .query_weibo import QueryWeibo
 from .query_xhs import QueryXhs
 
+_task_type_to_class = {
+    "bilibili": QueryBilibili,
+    "weibo": QueryWeibo,
+    "xhs": QueryXhs,
+    "douyin": QueryDouyin,
+    "douyu": QueryDouyu,
+    "huya": QueryHuya,
+    "demo": QueryDemo,
+}
+
 
 def get_query_task(config) -> QueryTask:
     task_type = config.get("type", None)
-    if task_type == "bilibili":
-        return QueryBilibili(config)
-    if task_type == "weibo":
-        return QueryWeibo(config)
-    if task_type == "xhs":
-        return QueryXhs(config)
-    if task_type == "douyin":
-        return QueryDouyin(config)
-    if task_type == "douyu":
-        return QueryDouyu(config)
-    if task_type == "huya":
-        return QueryHuya(config)
-    if task_type == "demo":
-        return QueryDemo(config)
+    if task_type is None or task_type not in _task_type_to_class:
+        raise ValueError(f"不支持的查询任务: {task_type}")
 
-    raise ValueError(f"不支持的查询任务: {task_type}")
+    return _task_type_to_class[task_type](config)

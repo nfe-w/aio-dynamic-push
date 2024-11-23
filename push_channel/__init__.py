@@ -14,32 +14,25 @@ from .wecom_bot import WeComBot
 
 push_channel_dict: dict[str, PushChannel] = {}
 
+_channel_type_to_class = {
+    "serverChan_turbo": ServerChanTurbo,
+    "wecom_apps": WeComApps,
+    "wecom_bot": WeComBot,
+    "dingtalk_bot": DingtalkBot,
+    "feishu_apps": FeishuApps,
+    "feishu_bot": FeishuBot,
+    "telegram_bot": TelegramBot,
+    "bark": Bark,
+    "gotify": Gotify,
+    "webhook": Webhook,
+    "email": Email,
+    "demo": Demo,
+}
+
 
 def get_push_channel(config) -> PushChannel:
     channel_type = config.get("type", None)
-    if channel_type == "serverChan_turbo":
-        return ServerChanTurbo(config)
-    if channel_type == "wecom_apps":
-        return WeComApps(config)
-    if channel_type == "wecom_bot":
-        return WeComBot(config)
-    if channel_type == "dingtalk_bot":
-        return DingtalkBot(config)
-    if channel_type == "feishu_apps":
-        return FeishuApps(config)
-    if channel_type == "feishu_bot":
-        return FeishuBot(config)
-    if channel_type == "telegram_bot":
-        return TelegramBot(config)
-    if channel_type == "bark":
-        return Bark(config)
-    if channel_type == "gotify":
-        return Gotify(config)
-    if channel_type == "webhook":
-        return Webhook(config)
-    if channel_type == "email":
-        return Email(config)
-    if channel_type == "demo":
-        return Demo(config)
+    if channel_type is None or channel_type not in _channel_type_to_class:
+        raise ValueError(f"不支持的通道类型: {channel_type}")
 
-    raise ValueError(f"不支持的通道类型: {channel_type}")
+    return _channel_type_to_class[channel_type](config)
