@@ -57,6 +57,7 @@ docker run -d -v [配置文件的绝对路径]/config.yml:/mnt/config.yml nfew/a
 | 飞书自建应用        | feishu_apps      |    ✅    | 🤔可以使用个人版，创建应用，授予其机器人权限<br/>👉https://open.feishu.cn/app?lang=zh-CN                                         |
 | 飞书群聊机器人       | feishu_bot       | ❌(暂不支持) | 🤩推荐，新建群聊添加自定义机器人即可，自定义关键词使用"【"<br/>👉https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot     |
 | Telegram机器人   | telegram_bot     |    ✅    | 🪜需要自备网络环境<br/>👉https://core.telegram.org/bots                                                             |
+| QQ频道机器人       | qq_bot           |    ✅    | 😢需要自行创建机器人，并启用机器人在频道内发言的权限<br/>👉https://q.qq.com/#/app/create-bot                                         |
 | Bark          | bark             |    ❌    | 🍎适合苹果系用户，十分轻量，但没法推送图片<br/>👉https://apps.apple.com/cn/app/id1403753865                                     |
 | Gotify        | gotify           |    ❌    | 🖥️适合自建服务器<br/>👉https://gotify.net                                                                         |
 | Webhook       | webhook          | ✅(POST) | ⚡️通用的方式，请求格式详见附录                                                                                            |

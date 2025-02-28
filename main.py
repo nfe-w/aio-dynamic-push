@@ -15,8 +15,8 @@ def init_push_channel(push_channel_config_list: list):
             if push_channel.push_channel_dict.get(config.get('name', '')) is not None:
                 raise ValueError(f"推送通道名称重复: {config.get('name', '')}")
 
-            push_channel.push_channel_dict[config.get('name', '')] = push_channel.get_push_channel(config)
             log.info(f"初始化推送通道: {config.get('name', '')}，通道类型: {config.get('type', None)}")
+            push_channel.push_channel_dict[config.get('name', '')] = push_channel.get_push_channel(config)
 
 
 def init_push_channel_test(common_config: dict):

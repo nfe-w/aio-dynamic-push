@@ -6,6 +6,7 @@ from .email import Email
 from .feishu_apps import FeishuApps
 from .feishu_bot import FeishuBot
 from .gotify import Gotify
+from .qq_bot import QQBot
 from .server_chan_turbo import ServerChanTurbo
 from .telegram_bot import TelegramBot
 from .webhook import Webhook
@@ -22,6 +23,7 @@ _channel_type_to_class = {
     "feishu_apps": FeishuApps,
     "feishu_bot": FeishuBot,
     "telegram_bot": TelegramBot,
+    "qq_bot": QQBot,
     "bark": Bark,
     "gotify": Gotify,
     "webhook": Webhook,

@@ -181,6 +181,27 @@ push_channel:
     api_token:
     # Telegram 机器人的chat_id，如果启动该推送则必填，详见 https://api.telegram.org/bot<YOUR_API_TOKEN>/getUpdates
     chat_id:
+  - name: 推送通道_QQ机器人
+    enable: false
+    type: qq_bot
+    # 接口域名 https://bot.q.qq.com/wiki/develop/api/#%E6%8E%A5%E5%8F%A3%E5%9F%9F%E5%90%8D
+    base_url: https://api.sgroup.qq.com
+    # 机器人ID，如果启动该推送则必填，https://q.qq.com/qqbot/#/developer/developer-setting
+    app_id:
+    # 机器人令牌，如果启动该推送则必填
+    token:
+    # 推送频道及子频道设置(支持多组)
+    push_target_list:
+      # 频道名称
+      - guild_name: "频道1"
+        # 子频道名称
+        channel_name_list:
+          - "子频道11"
+          - "子频道12"
+      - guild_name: "频道2"
+        channel_name_list:
+          - "子频道21"
+          - "子频道22"
   - name: 推送通道_Bark
     enable: false
     type: bark
