@@ -85,7 +85,7 @@ query_task:
     target_push_name_list:
       - 推送通道_企业微信应用
       - 推送通道_钉钉机器人
-    enable_dynamic_check: true
+    enable_dynamic_check: false # 抖音动态监测目前坏了，还没修好
     # 签名服务器url，参考 https://github.com/coder-fly/douyin-signature
     signature_server_url: http://ip:port
     # 用户名列表，必填（接口现在不返回作者信息了，重新获取还挺麻烦的，自己填上凑合用先）

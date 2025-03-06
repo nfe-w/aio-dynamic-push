@@ -40,7 +40,7 @@ docker run -d -v [配置文件的绝对路径]/config.yml:/mnt/config.yml nfew/a
 | B站   | bilibili |  ✅   |  ✅   |
 | 微博   | weibo    |  ✅   |  ❌   |
 | 小红书  | xhs      |  ✅   |  ❌   |
-| 抖音   | douyin   |  ✅   |  ✅   |
+| 抖音   | douyin   |  ❌   |  ✅   |
 | 斗鱼   | douyu    |  ❌   |  ✅   |
 | 虎牙   | huya     |  ❌   |  ✅   |
 
