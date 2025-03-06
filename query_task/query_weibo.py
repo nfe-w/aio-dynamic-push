@@ -63,6 +63,12 @@ class QueryWeibo(QueryTask):
             user = mblog["user"]
             screen_name = user["screen_name"]
 
+            avatar_url = None
+            try:
+                avatar_url = user["avatar_hd"]
+            except Exception:
+                log.error(f"【微博-查询动态状态-{self.name}】头像获取发生错误，uid：{uid}")
+
             if self.dynamic_dict.get(uid, None) is None:
                 self.dynamic_dict[uid] = deque(maxlen=self.len_of_deque)
                 for index in range(self.len_of_deque):
@@ -103,7 +109,7 @@ class QueryWeibo(QueryTask):
                     pic_url = mblog.get("original_pic", None)
                     jump_url = card["scheme"]
                 log.info(f"【微博-查询动态状态-{self.name}】【{screen_name}】动态有更新，准备推送：{content[:30]}")
-                self.push_for_weibo_dynamic(screen_name, mblog_id, content, pic_url, jump_url, dynamic_time, dynamic_raw_data=card)
+                self.push_for_weibo_dynamic(screen_name, mblog_id, content, pic_url, jump_url, dynamic_time, dynamic_raw_data=card, avatar_url=avatar_url)
 
     @staticmethod
     def get_headers(uid):
@@ -120,7 +126,7 @@ class QueryWeibo(QueryTask):
             "x-requested-with": "XMLHttpRequest",
         }
 
-    def push_for_weibo_dynamic(self, username=None, mblog_id=None, content=None, pic_url=None, jump_url=None, dynamic_time=None, dynamic_raw_data=None):
+    def push_for_weibo_dynamic(self, username=None, mblog_id=None, content=None, pic_url=None, jump_url=None, dynamic_time=None, dynamic_raw_data=None, avatar_url=None):
         """
         微博动态提醒推送
         :param username: 博主名
@@ -130,10 +136,15 @@ class QueryWeibo(QueryTask):
         :param jump_url: 跳转地址
         :param dynamic_time: 动态发送时间
         :param dynamic_raw_data: 动态原始数据
+        :param avatar_url: 头像url
         """
         if username is None or mblog_id is None or content is None:
             log.error(f"【微博-动态提醒推送-{self.name}】缺少参数，username:[{username}]，mblog_id:[{mblog_id}]，content:[{content[:30]}]")
             return
         title = f"【微博】【{username}】发微博了"
         content = f"{content[:100] + (content[100:] and '...')}[{dynamic_time}]"
-        super().push(title, content, jump_url, pic_url, extend_data={'dynamic_raw_data': dynamic_raw_data})
+        extend_data = {
+            'dynamic_raw_data': dynamic_raw_data,
+            'avatar_url': avatar_url,
+        }
+        super().push(title, content, jump_url, pic_url, extend_data=extend_data)

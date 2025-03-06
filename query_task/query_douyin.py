@@ -243,6 +243,12 @@ class QueryDouyin(QueryTask):
                     log.error(f"【抖音-查询直播状态-{self.name}】dict取值错误，user_account：{user_account}")
                     return
 
+                avatar_url = None
+                try:
+                    avatar_url = data.get('user').get('avatar_thumb').get('url_list')[0]
+                except Exception:
+                    log.error(f"【抖音-查询直播状态-{self.name}】头像获取发生错误，user_account：{user_account}")
+
                 if self.living_status_dict.get(user_account, None) is None:
                     self.living_status_dict[user_account] = room_status
                     log.info(f"【抖音-查询直播状态-{self.name}】【{nickname}】初始化")
@@ -257,7 +263,7 @@ class QueryDouyin(QueryTask):
                         jump_url = f'https://live.douyin.com/{user_account}'
 
                         log.info(f"【抖音-查询直播状态-{self.name}】【{nickname}】开播了，准备推送：{room_title}")
-                        self.push_for_douyin_live(nickname, jump_url, room_title, room_cover_url)
+                        self.push_for_douyin_live(nickname, jump_url, room_title, room_cover_url, avatar_url=avatar_url)
 
     @staticmethod
     def get_headers():
@@ -304,13 +310,17 @@ class QueryDouyin(QueryTask):
         content = content[:100] + (content[100:] and "...")
         super().push(title, content, video_url, pic_url, extend_data={'dynamic_raw_data': dynamic_raw_data})
 
-    def push_for_douyin_live(self, nickname=None, jump_url=None, room_title=None, room_cover_url=None):
+    def push_for_douyin_live(self, nickname=None, jump_url=None, room_title=None, room_cover_url=None, avatar_url=None):
         """
         抖音直播提醒推送
         :param nickname: 作者名
         :param jump_url: 跳转地址
         :param room_title: 直播间标题
         :param room_cover_url: 直播间封面
+        :param avatar_url: 头像url
         """
         title = f"【抖音】【{nickname}】开播了"
-        super().push(title, room_title, jump_url, room_cover_url)
+        extend_data = {
+            'avatar_url': avatar_url,
+        }
+        super().push(title, room_title, jump_url, room_cover_url, extend_data=extend_data)

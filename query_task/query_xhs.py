@@ -52,6 +52,13 @@ class QueryXhs(QueryTask):
                 log.error(f"【小红书-查询动态状态-{self.name}】请求返回数据为空，profile_id：{profile_id}")
             else:
                 user_name = result["user"]["userPageData"]["basicInfo"]["nickname"]
+
+                avatar_url = None
+                try:
+                    avatar_url = result["user"]["userPageData"]["basicInfo"]["images"]
+                except Exception:
+                    log.error(f"【小红书-查询动态状态-{self.name}】头像获取发生错误，profile_id：{profile_id}")
+
                 notes = result["user"]["notes"][0]
                 if len(notes) == 0:
                     super().handle_for_result_null("-1", profile_id, "小红书", user_name)
@@ -95,7 +102,7 @@ class QueryXhs(QueryTask):
                     pic_url = note_card["cover"]["infoList"][-1]["url"]
                     jump_url = f"https://www.xiaohongshu.com/user/profile/{profile_id}"
                     log.info(f"【小红书-查询动态状态-{self.name}】【{user_name}】动态有更新，准备推送：{content[:30]}")
-                    self.push_for_xhs_dynamic(user_name, note_title, content, pic_url, jump_url, dynamic_time, dynamic_raw_data=note)
+                    self.push_for_xhs_dynamic(user_name, note_title, content, pic_url, jump_url, dynamic_time, dynamic_raw_data=note, avatar_url=avatar_url)
 
     def get_note_detail(self, note_id=None):
         if note_id is None:
@@ -142,7 +149,7 @@ class QueryXhs(QueryTask):
             "upgrade-insecure-requests": "1"
         }
 
-    def push_for_xhs_dynamic(self, username=None, note_title=None, content=None, pic_url=None, jump_url=None, dynamic_time=None, dynamic_raw_data=None):
+    def push_for_xhs_dynamic(self, username=None, note_title=None, content=None, pic_url=None, jump_url=None, dynamic_time=None, dynamic_raw_data=None, avatar_url=None):
         """
         小红书动态提醒推送
         :param username: 博主名
@@ -152,10 +159,15 @@ class QueryXhs(QueryTask):
         :param jump_url: 跳转地址
         :param dynamic_time: 动态发送时间
         :param dynamic_raw_data: 动态原始数据
+        :param avatar_url: 头像url
         """
         if username is None or note_title is None or content is None:
             log.error(f"【小红书-动态提醒推送-{self.name}】缺少参数，username:[{username}]，note_title:[{note_title}]，content:[{content[:30]}]")
             return
         title = f"【小红书】【{username}】发动态了"
         content = f"{content[:100] + (content[100:] and '...')}[{dynamic_time}]"
-        super().push(title, content, jump_url, pic_url, extend_data={'dynamic_raw_data': dynamic_raw_data})
+        extend_data = {
+            'dynamic_raw_data': dynamic_raw_data,
+            'avatar_url': avatar_url,
+        }
+        super().push(title, content, jump_url, pic_url, extend_data=extend_data)

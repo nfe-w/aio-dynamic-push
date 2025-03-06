@@ -23,6 +23,9 @@ class Bark(PushChannel):
             query_task_config = extend_data.get("query_task_config")
             if query_task_config and "name" in query_task_config:
                 params["group"] = query_task_config["name"]
+            avatar_url = extend_data.get("avatar_url")
+            if avatar_url:
+                params["icon"] = avatar_url
 
         push_url = f"{push_url}?{urlencode(params)}" if params else push_url
         response = util.requests_post(push_url, self.name)

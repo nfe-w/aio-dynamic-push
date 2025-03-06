@@ -61,6 +61,12 @@ class QueryHuya(QueryTask):
                 log.error(f"【虎牙-查询直播状态-{self.name}】dict取值错误，room_id：{room_id}")
                 return
 
+            avatar_url = None
+            try:
+                avatar_url = game_live_info.get('avatar180')
+            except Exception:
+                log.error(f"【虎牙-查询直播状态-{self.name}】头像获取发生错误，room_id：{room_id}")
+
             live_status = len(game_stream_info_list) > 0
 
             if self.living_status_dict.get(room_id, None) is None:
@@ -75,15 +81,19 @@ class QueryHuya(QueryTask):
                     room_name = game_live_info.get('roomName', '')
                     screenshot = game_live_info.get('screenshot', '').split('?')[0]
                     log.info(f"【虎牙-查询直播状态-{self.name}】【{username}】开播了，准备推送：{room_name}")
-                    self.push_for_huya_live(username=username, room_title=room_name, jump_url=query_url, room_cover_url=screenshot)
+                    self.push_for_huya_live(username=username, room_title=room_name, jump_url=query_url, room_cover_url=screenshot, avatar_url=avatar_url)
 
-    def push_for_huya_live(self, username=None, room_title=None, jump_url=None, room_cover_url=None):
+    def push_for_huya_live(self, username=None, room_title=None, jump_url=None, room_cover_url=None, avatar_url=None):
         """
         虎牙直播提醒推送
         :param username: 主播名称
         :param room_title: 直播间标题
         :param jump_url: 跳转地址
         :param room_cover_url: 直播间封面
+        :param avatar_url: 头像url
         """
         title = f"【虎牙】【{username}】开播了"
-        super().push(title, room_title, jump_url, room_cover_url)
+        extend_data = {
+            'avatar_url': avatar_url,
+        }
+        super().push(title, room_title, jump_url, room_cover_url, extend_data=extend_data)

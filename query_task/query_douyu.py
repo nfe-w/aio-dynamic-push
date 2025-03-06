@@ -51,6 +51,12 @@ class QueryDouyu(QueryTask):
                 log.error(f"【斗鱼-查询直播状态-{self.name}】dict取值错误，room_id：{room_id}")
                 return
 
+            avatar_url = None
+            try:
+                avatar_url = room_info.get('avatar').get('small')
+            except Exception:
+                log.error(f"【斗鱼-查询直播状态-{self.name}】头像获取发生错误，room_id：{room_id}")
+
             show_status = room_info['show_status']
 
             if self.living_status_dict.get(room_id, None) is None:
@@ -65,15 +71,19 @@ class QueryDouyu(QueryTask):
                     room_name = room_info.get('room_name')
                     room_pic = room_info.get('room_pic')
                     log.info(f"【斗鱼-查询直播状态-{self.name}】【{username}】开播了，准备推送：{room_name}")
-                    self.push_for_douyu_live(username=username, room_title=room_name, jump_url=f'https://www.douyu.com/{room_id}', room_cover_url=room_pic)
+                    self.push_for_douyu_live(username=username, room_title=room_name, jump_url=f'https://www.douyu.com/{room_id}', room_cover_url=room_pic, avatar_url=avatar_url)
 
-    def push_for_douyu_live(self, username=None, room_title=None, jump_url=None, room_cover_url=None):
+    def push_for_douyu_live(self, username=None, room_title=None, jump_url=None, room_cover_url=None, avatar_url=None):
         """
         斗鱼直播提醒推送
         :param username: 主播名称
         :param room_title: 直播间标题
         :param jump_url: 跳转地址
         :param room_cover_url: 直播间封面
+        :param avatar_url: 头像url
         """
         title = f"【斗鱼】【{username}】开播了"
-        super().push(title, room_title, jump_url, room_cover_url)
+        extend_data = {
+            'avatar_url': avatar_url,
+        }
+        super().push(title, room_title, jump_url, room_cover_url, extend_data=extend_data)
