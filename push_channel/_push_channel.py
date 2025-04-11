@@ -1,9 +1,13 @@
-class PushChannel(object):
+from abc import ABC, abstractmethod
+
+
+class PushChannel(ABC):
     def __init__(self, config):
         self.name = config.get("name", "")
         self.enable = config.get("enable", False)
         self.type = config.get("type", "")
 
+    @abstractmethod
     def push(self, title, content, jump_url=None, pic_url=None, extend_data=None):
         """
         :param title: 标题

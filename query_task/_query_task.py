@@ -1,10 +1,11 @@
+from abc import ABC, abstractmethod
 from collections import deque
 
 import push_channel
 from common.logger import log
 
 
-class QueryTask(object):
+class QueryTask(ABC):
     def __init__(self, config):
         self.name = config.get("name", "")
         self.enable = config.get("enable", False)
@@ -20,6 +21,7 @@ class QueryTask(object):
         self.dynamic_dict = {}
         self.living_status_dict = {}
 
+    @abstractmethod
     def query(self):
         raise NotImplementedError("Subclasses must implement the query method")
 
