@@ -17,7 +17,7 @@ class QueryTask(ABC):
         self.enable_dynamic_check = config.get("enable_dynamic_check", False)
         self.enable_living_check = config.get("enable_living_check", False)
 
-        self.len_of_deque = 20
+        self.len_of_deque = 100
         self.dynamic_dict = {}
         self.living_status_dict = {}
 
