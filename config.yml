@@ -205,6 +205,8 @@ push_channel:
   - name: 推送通道_Bark
     enable: false
     type: bark
+    # iOS 设备专用，Bark 服务器地址，如果启动该推送则必填，不要携带最后的"/"，默认值：https://api.day.app
+    server_url: https://api.day.app
     # iOS 设备专用，Bark app 的key，如果启动该推送则必填
     key:
   - name: 推送通道_Gotify
