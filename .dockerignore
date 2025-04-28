@@ -1,4 +1,7 @@
+.git/
 .github/
+.idea/
+.venv/
 docs/
 LICENSE
 README.md

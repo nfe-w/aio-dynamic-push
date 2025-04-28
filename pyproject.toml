@@ -1,0 +1,20 @@
+[project]
+name = "aio-dynamic-push"
+version = "0.1.0"
+description = "All-in-one Dynamic Push"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "beautifulsoup4==4.12.3",
+    "fake-useragent==1.5.1",
+    "pyyaml==6.0.1",
+    "requests==2.31.0",
+    "requests-toolbelt==1.0.0",
+    "schedule==1.2.1",
+    "urllib3==1.26.9",
+]
+
+[[tool.uv.index]]
+name = "tsinghua"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true

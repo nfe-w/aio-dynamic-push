@@ -1,5 +1,14 @@
 # All-in-one Dynamic Push - 多合一动态检测与推送
 
+[![Docker Image](https://img.shields.io/badge/DockerHub-nfew/aio--dynamic--push-367AC7?logo=Docker&logoColor=white)](https://hub.docker.com/r/nfew/aio-dynamic-push)
+[![Docker Pulls](https://img.shields.io/docker/pulls/nfew/aio-dynamic-push?logo=Docker&logoColor=white)](https://hub.docker.com/r/nfew/aio-dynamic-push)
+[![Docker Image Size](https://img.shields.io/docker/image-size/nfew/aio-dynamic-push/latest?logo=Docker&logoColor=white)](https://hub.docker.com/r/nfew/aio-dynamic-push)
+[![Python Version](https://img.shields.io/badge/python-3.9-blue?logo=Python&logoColor=white)](https://www.python.org/downloads)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![Actions Status](https://img.shields.io/github/actions/workflow/status/nfe-w/aio-dynamic-push/docker-image.yml?logo=Github)](https://github.com/nfe-w/aio-dynamic-push/actions)
+[![GitHub License](https://img.shields.io/github/license/nfe-w/aio-dynamic-push?logo=Github&logoColor=white)](https://github.com/nfe-w/aio-dynamic-push/blob/master/LICENSE)
+![GitHub Repo stars](https://img.shields.io/github/stars/nfe-w/aio-dynamic-push)
+
 ## 简介
 
 一款整合多平台`动态/直播开播提醒`检测与推送的小工具，目前支持以下平台：
@@ -64,6 +73,8 @@ docker run -d -v [配置文件的绝对路径]/config.yml:/mnt/config.yml nfew/a
 | 电子邮件          | email            |    ✅    | 📧通用的方式                                                                                                     |
 
 ## 开发说明
+
+推荐使用 [uv](https://github.com/astral-sh/uv) 运行
 
 - 新增查询任务：详见 `query_task/query_demo.py`
 - 新增推送通道：详见 `push_channel/demo.py`
