@@ -85,7 +85,7 @@ class QueryBilibili(QueryTask):
             return
         uid = str(uid)
         query_url = (f"https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space"
-                     f"?host_mid={uid}&offset=&my_ts={int(time.time())}")
+                     f"?host_mid={uid}&offset=&my_ts={int(time.time())}&features=itemOpusStyle")
         headers = self.get_headers(uid)
         if self.buvid3 is not None:
             headers['cookie'] = f"buvid3={self.buvid3};"
@@ -155,8 +155,8 @@ class QueryBilibili(QueryTask):
                     log.debug(self.dynamic_dict[uid])
 
                     dynamic_type = item["type"]
-                    allow_type_list = ["DYNAMIC_TYPE_DRAW",  # 带图动态
-                                       "DYNAMIC_TYPE_WORD",  # 纯文字动态
+                    allow_type_list = ["DYNAMIC_TYPE_DRAW",  # 带图/图文动态，纯文本、大封面图文、九宫格图文
+                                       "DYNAMIC_TYPE_WORD",  # 纯文字动态，疑似废弃
                                        "DYNAMIC_TYPE_AV",  # 投稿视频
                                        "DYNAMIC_TYPE_ARTICLE",  # 投稿专栏
                                        "DYNAMIC_TYPE_COMMON_SQUARE"  # 装扮
@@ -179,11 +179,19 @@ class QueryBilibili(QueryTask):
                         content = module_dynamic["desc"]["text"]
                         title_msg = "转发了动态"
                     elif dynamic_type == "DYNAMIC_TYPE_DRAW":
-                        # 带图动态
-                        content = module_dynamic["desc"]["text"]
-                        pic_url = module_dynamic["major"]["draw"]["items"][0]["src"]
+                        if module_dynamic["major"]["type"] == "MAJOR_TYPE_OPUS":
+                            # 带图/图文动态，纯文本、大封面图文、九宫格图文
+                            content = module_dynamic["major"]["opus"]["summary"]["text"]
+                            try:
+                                pic_url = module_dynamic["major"]["opus"]["pics"][0]["url"]
+                            except Exception:
+                                pass
+                        else:
+                            # 未知
+                            content = module_dynamic["desc"]["text"]
+                            pic_url = module_dynamic["major"]["draw"]["items"][0]["src"]
                     elif dynamic_type == "DYNAMIC_TYPE_WORD":
-                        # 纯文字动态
+                        # 纯文字动态，疑似废弃
                         content = module_dynamic["desc"]["text"]
                     elif dynamic_type == "DYNAMIC_TYPE_AV":
                         # 投稿视频
@@ -193,7 +201,10 @@ class QueryBilibili(QueryTask):
                     elif dynamic_type == "DYNAMIC_TYPE_ARTICLE":
                         # 投稿专栏
                         content = module_dynamic["major"]["opus"]["title"]
-                        pic_url = module_dynamic["major"]["opus"]["pics"][0]["url"]
+                        try:
+                            pic_url = module_dynamic["major"]["opus"]["pics"][0]["url"]
+                        except Exception:
+                            pass
                     elif dynamic_type == "DYNAMIC_TYPE_COMMON_SQUARE":
                         # 装扮
                         content = module_dynamic["desc"]["text"]
