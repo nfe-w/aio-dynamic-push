@@ -1,5 +1,5 @@
 FROM python:3.9-alpine AS builder
-COPY --from=ghcr.io/astral-sh/uv:0.6.17 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.7.6 /uv /uvx /bin/
 WORKDIR /app
 COPY . /app/
 RUN uv sync --locked

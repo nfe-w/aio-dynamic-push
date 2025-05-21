@@ -11,7 +11,7 @@
 
 ## 简介
 
-一款整合多平台`动态/直播开播提醒`检测与推送的小工具，目前支持以下平台：
+一款整合多平台 `动态/直播开播提醒` 检测与推送的小工具，目前支持以下平台：
 
 - [x] B站
 - [x] 微博
@@ -72,28 +72,42 @@ docker run -d -v [配置文件的绝对路径]/config.yml:/mnt/config.yml nfew/a
 | Webhook       | webhook          | ✅(POST) | ⚡️通用的方式，请求格式详见附录                                                                                            |
 | 电子邮件          | email            |    ✅    | 📧通用的方式                                                                                                     |
 
+## 本地运行方式
+
+1. （可选，推荐）安装 [uv](https://github.com/astral-sh/uv)
+
+   ```sh
+   # macOS / Linux
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   
+   # Windows
+   powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+   ```
+
+2. 安装依赖
+
+   ```sh
+   # 使用 uv 安装依赖
+   uv sync --locked
+   
+   # 或：使用 pip 安装依赖
+   pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+   ```
+
+3. 修改配置文件 [config.yml](./config.yml)
+
+4. 启动项目
+
+   ```sh
+   nohup python3 -u main.py >& aio-dynamic-push.log &
+   ```
+
 ## 开发说明
 
 推荐使用 [uv](https://github.com/astral-sh/uv) 运行
 
 - 新增查询任务：详见 `query_task/query_demo.py`
 - 新增推送通道：详见 `push_channel/demo.py`
-
-## 运行环境
-
-- [Python 3](https://www.python.org/)
-
-## 直接启动
-
-#### 1. 填写config.yml配置信息
-
-#### 2.安装第三方库
-
-`pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/`
-
-#### 3.启动脚本
-
-`nohup python3 -u main.py >& aio-dynamic-push.log &`
 
 ## 附录
 
@@ -132,7 +146,7 @@ Content-Type: application/json
 }
 ```
 
-## 声明:
+## 声明
 
 - 本仓库发布的`aio-dynamic-push`项目中涉及的任何脚本，仅用于测试和学习研究，禁止用于商业用途
 - `nfe-w` 对任何脚本问题概不负责，包括但不限于由任何脚本错误导致的任何损失或损害
