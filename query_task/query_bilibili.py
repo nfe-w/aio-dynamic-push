@@ -84,7 +84,7 @@ class QueryBilibili(QueryTask):
         if uid is None:
             return
         uid = str(uid)
-        query_url = (f"https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/{'all' if self.cookie else 'space'}"
+        query_url = (f"https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space"
                      f"?host_mid={uid}&offset=&my_ts={int(time.time())}&features=itemOpusStyle")
         headers = self.get_headers(uid)
         if self.buvid3 is not None:
