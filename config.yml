@@ -202,6 +202,16 @@ push_channel:
         channel_name_list:
           - "子频道21"
           - "子频道22"
+  - name: 推送通道_NapCatQQ
+    enable: false
+    type: napcat_qq
+    # NapCatQQ 的 HTTP 服务器地址
+    api_url: http://localhost:3000
+    # 接口Token
+    token:
+    # user_id 与 group_id 二选一，user_id 为用户 QQ 号，group_id 为群号
+    user_id:
+    group_id:
   - name: 推送通道_Bark
     enable: false
     type: bark
