@@ -13,7 +13,6 @@ from common.logger import log
 from common.proxy import my_proxy
 from query_task import QueryTask
 
-
 class QueryDouyin(QueryTask):
     def __init__(self, config):
         super().__init__(config)
@@ -207,6 +206,7 @@ class QueryDouyin(QueryTask):
             "browser_name": "Chrome",
             "browser_version": "109.0.0.0",
             "web_rid": f"{user_account}",
+            "a_bogus": "",
         }
         response = util.requests_get(query_url, f"抖音-查询直播状态-{self.name}", headers=headers, params=params, use_proxy=True)
         if util.check_response_is_ok(response):
