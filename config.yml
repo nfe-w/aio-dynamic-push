@@ -139,6 +139,14 @@ push_channel:
     type: serverChan_turbo
     # Server酱_Turbo推送服务，如果启用该推送，必须填入，获取参考 https://sct.ftqq.com
     send_key:
+  - name: 推送通道_Server酱_3
+    enable: false
+    type: serverChan_3
+    # Server酱_3的参数 ，如果启用该推送，必须填入，获取参考 https://sc3.ft07.com
+    send_key:
+    uid:
+    # 消息标签，非必填，多个标签使用竖线分隔，例如：标签1|标签2
+    tags:
   - name: 推送通道_企业微信应用
     enable: false
     type: wecom_apps

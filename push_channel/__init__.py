@@ -8,6 +8,7 @@ from .feishu_bot import FeishuBot
 from .gotify import Gotify
 from .napcat_qq import NapCatQQ
 from .qq_bot import QQBot
+from .server_chan_3 import ServerChan3
 from .server_chan_turbo import ServerChanTurbo
 from .telegram_bot import TelegramBot
 from .webhook import Webhook
@@ -18,6 +19,7 @@ push_channel_dict: dict[str, PushChannel] = {}
 
 _channel_type_to_class = {
     "serverChan_turbo": ServerChanTurbo,
+    "serverChan_3": ServerChan3,
     "wecom_apps": WeComApps,
     "wecom_bot": WeComBot,
     "dingtalk_bot": DingtalkBot,
