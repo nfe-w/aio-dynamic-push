@@ -28,7 +28,7 @@ def init_push_channel_test(common_config: dict):
             channel.push(title=f"【{channel_name}】通道测试",
                          content=f"可正常使用🎉",
                          jump_url="https://www.baidu.com",
-                         pic_url=None,
+                         pic_url="https://www.baidu.com/img/flexible/logo/pc/result.png",
                          extend_data={})
 
 

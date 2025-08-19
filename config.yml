@@ -135,7 +135,7 @@ push_channel:
   - name: 推送通道_Server酱_Turbo
     # 是否启用 true/false
     enable: false
-    # 通道类型，serverChan_turbo/wecom_apps/dingtalk_bot/feishu_apps/feishu_bot/bark/webhook
+    # 通道类型，详见 README.md
     type: serverChan_turbo
     # Server酱_Turbo推送服务，如果启用该推送，必须填入，获取参考 https://sct.ftqq.com
     send_key:

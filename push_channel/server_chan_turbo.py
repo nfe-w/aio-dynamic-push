@@ -12,6 +12,12 @@ class ServerChanTurbo(PushChannel):
 
     def push(self, title, content, jump_url=None, pic_url=None, extend_data=None):
         push_url = f"https://sctapi.ftqq.com/{self.send_key}.send"
-        response = util.requests_post(push_url, self.name, params={"title": title, "desp": f"`{content}`[点我直达]({jump_url})"})
+        data = {
+            "title": title,
+            "desp": f"{content}\n\n[点我直达]({jump_url})"
+        }
+        if pic_url:
+            data["desp"] += f"\n\n![]({pic_url})"
+        response = util.requests_post(push_url, self.name, data=data)
         push_result = "成功" if util.check_response_is_ok(response) else "失败"
         log.info(f"【推送_{self.name}】{push_result}")
