@@ -232,8 +232,7 @@ class QueryDouyin(QueryTask):
                     return
                 room_datas = data.get('data')
                 if room_datas is None or len(room_datas) == 0:
-                    log.error(f"【抖音-查询直播状态-{self.name}】【{user_account}】未开通直播间，停止检测")
-                    self.douyin_id_list.remove(user_account)
+                    log.error(f"【抖音-查询直播状态-{self.name}】【{user_account}】疑似未开通直播间，跳过本次检测")
                     return
                 try:
                     room_data = room_datas[0]
