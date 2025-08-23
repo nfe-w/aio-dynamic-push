@@ -42,7 +42,7 @@ query_task:
     # 是否跳过提醒"转发"类型的动态 true/false
     skip_forward: true
     # 如果请求提示 -352, 可以填入下面两项之一, 建议使用 payload 自动获取buvid3
-    # cookie，可以一定程度防ban，建议用小号的，貌似无痕窗口不登录时拿到的cookie也能用，优先级高于自动获取buvid3
+    # cookie，可选，配置后可以一定程度防ban，建议用小号的，貌似无痕窗口不登录时拿到的cookie也能用，优先级高于自动获取buvid3
     cookie: ""
     # 浏览器指纹，取自于 /x/internal/gaia-gateway/ExClimbWuzhi 接口的body，需要填入的是payload参数的value，用于自动获取并激活buvid3
     payload: ""
@@ -76,6 +76,8 @@ query_task:
     profile_id_list:
       - 52d8c541b4c4d60e6c867480
       - 5bf64788aa4b0a000114b879
+    # cookie，可选，配置后可以一定程度防ban，建议用小号的
+    cookie: ""
   - name: 任务_douyin
     enable: false
     type: douyin

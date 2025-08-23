@@ -14,6 +14,7 @@ class QueryXhs(QueryTask):
     def __init__(self, config):
         super().__init__(config)
         self.profile_id_list = config.get("profile_id_list", [])
+        self.cookie = config.get("cookie", "")
 
     def query(self):
         if not self.enable:
@@ -33,6 +34,8 @@ class QueryXhs(QueryTask):
             return
         query_url = f"https://www.xiaohongshu.com/user/profile/{profile_id}"
         headers = self.get_headers()
+        if self.cookie != "":
+            headers["cookie"] = self.cookie
         response = util.requests_get(query_url, f"小红书-查询动态状态-{self.name}", headers=headers, use_proxy=True)
         if util.check_response_is_ok(response):
             html_text = response.text
