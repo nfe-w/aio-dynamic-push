@@ -19,6 +19,8 @@ class NapCatQQ(PushChannel):
         self.user_id = str(_user_id) if _user_id else None
         _group_id = config.get("group_id", None)
         self.group_id = str(_group_id) if _group_id else None
+        _at_qq = config.get("at_qq", None)
+        self.at_qq = str(_at_qq) if _at_qq else None
         if not self.api_url or (not self.user_id and not self.group_id):
             log.error(f"【推送_{self.name}】配置不完整，推送功能将无法正常使用")
         if self.user_id and self.group_id:
@@ -44,6 +46,18 @@ class NapCatQQ(PushChannel):
             message.append({
                 "type": "text",
                 "data": {"text": f"\n\n原文: {jump_url}"}
+            })
+
+        if self.at_qq:
+            message.append({
+                "type": "text",
+                "data": {"text": "\n\n"}
+            })
+            message.append({
+                "type": "at",
+                "data": {
+                    "qq": f"{self.at_qq}",
+                }
             })
 
         payload = {

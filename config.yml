@@ -222,6 +222,8 @@ push_channel:
     # user_id 与 group_id 二选一，user_id 为用户 QQ 号，group_id 为群号
     user_id:
     group_id:
+    # 需要 @ 的 QQ 号，仅能填写 1 个，"all" 表示@全体成员
+    at_qq: "all"
   - name: 推送通道_Bark
     enable: false
     type: bark
