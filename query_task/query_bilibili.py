@@ -85,7 +85,8 @@ class QueryBilibili(QueryTask):
             return
         uid = str(uid)
         query_url = (f"https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space"
-                     f"?host_mid={uid}&offset=&my_ts={int(time.time())}&features=itemOpusStyle")
+                     f"?host_mid={uid}&offset=&my_ts={int(time.time())}"
+                     f"&features=itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,forwardListHidden,decorationCard,commentsNewVersion,onlyfansAssetsV2,ugcDelete,onlyfansQaCard")
         headers = self.get_headers(uid)
         if self.buvid3 is not None:
             headers['cookie'] = f"buvid3={self.buvid3};"
@@ -192,7 +193,7 @@ class QueryBilibili(QueryTask):
                             pic_url = module_dynamic["major"]["draw"]["items"][0]["src"]
                     elif dynamic_type == "DYNAMIC_TYPE_WORD":
                         # 纯文字动态，疑似废弃
-                        content = module_dynamic["desc"]["text"]
+                        content = module_dynamic["major"]["opus"]["summary"]["text"]
                     elif dynamic_type == "DYNAMIC_TYPE_AV":
                         # 投稿视频
                         content = module_dynamic["major"]["archive"]["title"]
