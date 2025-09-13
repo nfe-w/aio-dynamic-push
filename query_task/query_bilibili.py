@@ -6,6 +6,7 @@ from common import util
 from common.cache import set_cached_value, get_cached_value
 from common.logger import log
 from common.proxy import my_proxy
+from common.cypress_runner import CypressRunner
 from query_task import QueryTask
 
 
@@ -17,6 +18,8 @@ class QueryBilibili(QueryTask):
         self.cookie = config.get("cookie", "")
         self.payload = config.get("payload", "")
         self.buvid3 = None
+        self.use_cypress = config.get("use_cypress", False)
+        self.cypress_runner = CypressRunner() if self.use_cypress else None
 
     def query(self):
         if not self.enable:
@@ -28,7 +31,10 @@ class QueryBilibili(QueryTask):
                 my_proxy.current_proxy_ip = my_proxy.get_proxy(proxy_check_url="http://api.bilibili.com/x/space/acc/info")
                 if self.enable_dynamic_check:
                     for uid in self.uid_list:
-                        self.query_dynamic_v2(uid)
+                        if self.use_cypress:
+                            self.query_dynamic_cypress(uid)
+                        else:
+                            self.query_dynamic_v2(uid)
                         time.sleep(1)
                 if self.enable_living_check:
                     self.query_live_status_batch(self.uid_list)
@@ -79,6 +85,162 @@ class QueryBilibili(QueryTask):
             buvid3 = data.get("b_3")
             return buvid3
         return None
+
+    def query_dynamic_cypress(self, uid=None):
+        """
+        Query Bilibili dynamic using Cypress browser automation
+        This method is more stable as it uses a real browser to load the page
+        """
+        if uid is None or self.cypress_runner is None:
+            return
+        
+        uid = str(uid)
+        log.info(f"【B站-查询动态状态-Cypress-{self.name}】开始获取【{uid}】的动态")
+        
+        try:
+            # Use Cypress to extract dynamic data
+            extraction_result = self.cypress_runner.run_bilibili_dynamic_extraction(uid, timeout=90)
+            
+            if extraction_result is None:
+                log.error(f"【B站-查询动态状态-Cypress-{self.name}】【{uid}】Cypress提取失败")
+                super().handle_for_result_null(-1, uid, "B站", uid)
+                return
+            
+            if not extraction_result.get('success', False):
+                log.error(f"【B站-查询动态状态-Cypress-{self.name}】【{uid}】提取失败：{extraction_result.get('error', 'Unknown error')}")
+                super().handle_for_result_null(-1, uid, "B站", uid)
+                return
+            
+            # Process the extracted data
+            data = extraction_result.get('data', {})
+            if data.get('code') != 0:
+                log.error(f"【B站-查询动态状态-Cypress-{self.name}】【{uid}】API返回错误：code={data.get('code')}, message={data.get('message')}")
+                super().handle_for_result_null(-1, uid, "B站", uid)
+                return
+            
+            result_data = data.get('data', {})
+            if "items" not in result_data or result_data["items"] is None or len(result_data["items"]) == 0:
+                log.warning(f"【B站-查询动态状态-Cypress-{self.name}】【{uid}】没有找到动态数据")
+                super().handle_for_result_null(-1, uid, "B站", uid)
+                return
+            
+            # Process the items using the same logic as query_dynamic_v2
+            items = result_data["items"]
+            
+            # Filter out pinned items
+            items = [item for item in items if
+                     (item["modules"].get("module_tag", None) is None or 
+                      item["modules"].get("module_tag").get("text", None) != "置顶")]
+            
+            if len(items) == 0:
+                log.warning(f"【B站-查询动态状态-Cypress-{self.name}】【{uid}】过滤置顶后没有动态数据")
+                super().handle_for_result_null(-1, uid, "B站", uid)
+                return
+            
+            # Process the first item
+            item = items[0]
+            dynamic_id = item["id_str"]
+            
+            try:
+                uname = item["modules"]["module_author"]["name"]
+            except KeyError:
+                log.error(f"【B站-查询动态状态-Cypress-{self.name}】【{uid}】获取不到uname")
+                return
+            
+            avatar_url = None
+            try:
+                avatar_url = item["modules"]["module_author"]["face"]
+            except Exception:
+                log.error(f"【B站-查询动态状态-Cypress-{self.name}】头像获取发生错误，uid：{uid}")
+            
+            # Initialize or update dynamic history
+            if self.dynamic_dict.get(uid, None) is None:
+                self.dynamic_dict[uid] = deque(maxlen=self.len_of_deque)
+                for index in range(self.len_of_deque):
+                    if index < len(items):
+                        self.dynamic_dict[uid].appendleft(items[index]["id_str"])
+                log.info(f"【B站-查询动态状态-Cypress-{self.name}】【{uname}】动态初始化：{self.dynamic_dict[uid]}")
+                return
+            
+            # Check if this is a new dynamic
+            if dynamic_id not in self.dynamic_dict[uid]:
+                previous_dynamic_id = self.dynamic_dict[uid].pop()
+                self.dynamic_dict[uid].append(previous_dynamic_id)
+                log.info(f"【B站-查询动态状态-Cypress-{self.name}】【{uname}】上一条动态id[{previous_dynamic_id}]，本条动态id[{dynamic_id}]")
+                self.dynamic_dict[uid].append(dynamic_id)
+                log.debug(self.dynamic_dict[uid])
+                
+                # Process the new dynamic using existing logic
+                self._process_new_dynamic_item(item, uname, uid, avatar_url)
+            
+        except Exception as e:
+            log.error(f"【B站-查询动态状态-Cypress-{self.name}】【{uid}】处理过程中出错：{e}", exc_info=True)
+            super().handle_for_result_null(-1, uid, "B站", uid)
+
+    def _process_new_dynamic_item(self, item, uname, uid, avatar_url):
+        """
+        Process a new dynamic item (extracted from query_dynamic_v2 for reuse)
+        """
+        dynamic_type = item["type"]
+        allow_type_list = ["DYNAMIC_TYPE_DRAW",  # 带图/图文动态，纯文本、大封面图文、九宫格图文
+                           "DYNAMIC_TYPE_WORD",  # 纯文字动态，疑似废弃
+                           "DYNAMIC_TYPE_AV",  # 投稿视频
+                           "DYNAMIC_TYPE_ARTICLE",  # 投稿专栏
+                           "DYNAMIC_TYPE_COMMON_SQUARE"  # 装扮
+                           ]
+        if self.skip_forward is False:
+            allow_type_list.append("DYNAMIC_TYPE_FORWARD")  # 动态转发
+        
+        if dynamic_type not in allow_type_list:
+            log.info(f"【B站-查询动态状态-{self.name}】【{uname}】动态有更新，但不在需要推送的动态类型列表中，dynamic_type->{dynamic_type}")
+            return
+        
+        timestamp = item["modules"]["module_author"]["pub_ts"]
+        dynamic_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(timestamp))
+        module_dynamic = item["modules"]["module_dynamic"]
+        
+        content = None
+        pic_url = None
+        title_msg = "发动态了"
+        
+        if dynamic_type == "DYNAMIC_TYPE_FORWARD":
+            # 转发动态
+            content = module_dynamic["desc"]["text"]
+            title_msg = "转发了动态"
+        elif dynamic_type == "DYNAMIC_TYPE_DRAW":
+            if module_dynamic["major"]["type"] == "MAJOR_TYPE_OPUS":
+                # 带图/图文动态，纯文本、大封面图文、九宫格图文
+                content = module_dynamic["major"]["opus"]["summary"]["text"]
+                try:
+                    pic_url = module_dynamic["major"]["opus"]["pics"][0]["url"]
+                except Exception:
+                    pass
+            else:
+                # 未知
+                content = module_dynamic["desc"]["text"]
+                pic_url = module_dynamic["major"]["draw"]["items"][0]["src"]
+        elif dynamic_type == "DYNAMIC_TYPE_WORD":
+            # 纯文字动态，疑似废弃
+            content = module_dynamic["desc"]["text"]
+        elif dynamic_type == "DYNAMIC_TYPE_AV":
+            # 投稿视频
+            content = module_dynamic["major"]["archive"]["title"]
+            pic_url = module_dynamic["major"]["archive"]["cover"]
+            title_msg = "投稿了"
+        elif dynamic_type == "DYNAMIC_TYPE_ARTICLE":
+            # 投稿专栏
+            content = module_dynamic["major"]["opus"]["title"]
+            try:
+                pic_url = module_dynamic["major"]["opus"]["pics"][0]["url"]
+            except Exception:
+                pass
+        elif dynamic_type == "DYNAMIC_TYPE_COMMON_SQUARE":
+            # 装扮
+            content = module_dynamic["desc"]["text"]
+        
+        log.info(f"【B站-查询动态状态-{self.name}】【{uname}】动态有更新，准备推送：{content[:30]}")
+        dynamic_id = item["id_str"]
+        self.push_for_bili_dynamic(uname, dynamic_id, content, pic_url, dynamic_type, dynamic_time, title_msg, dynamic_raw_data=item, avatar_url=avatar_url)
 
     def query_dynamic_v2(self, uid=None, is_retry_by_buvid3=False):
         if uid is None:

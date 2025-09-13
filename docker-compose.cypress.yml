@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  aio-dynamic-push-cypress:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aio-dynamic-push-cypress-test
+    volumes:
+      - ./config.yml:/mnt/config.yml:ro
+      - ./cypress/fixtures:/app/cypress/fixtures
+    environment:
+      - DISPLAY=:99
+      - CYPRESS_CACHE_FOLDER=/root/.cache/Cypress
+      - NODE_ENV=production
+    command: >
+      sh -c "
+        echo 'Starting Xvfb virtual display...' &&
+        Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+        sleep 3 &&
+        echo 'Testing Cypress installation...' &&
+        npx cypress --version &&
+        echo 'Verifying Cypress...' &&
+        npx cypress verify &&
+        echo 'Running Cypress test...' &&
+        python test_docker_cypress.py
+      "
+    networks:
+      - cypress-test
+
+networks:
+  cypress-test:
+    driver: bridge

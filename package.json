@@ -1,0 +1,19 @@
+{
+  "name": "aio-dynamic-push-cypress",
+  "version": "1.0.0",
+  "description": "Cypress integration for Bilibili dynamic fetching",
+  "main": "index.js",
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test:bilibili": "cypress run --spec 'cypress/e2e/bilibili-dynamic.cy.ts'",
+    "cypress:run:docker": "cypress run --headless --browser chrome --config chromeWebSecurity=false,video=false,screenshotOnRunFailure=false"
+  },
+  "dependencies": {
+    "typescript": "^5.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.3",
+    "cypress": "^13.10.0"
+  }
+}

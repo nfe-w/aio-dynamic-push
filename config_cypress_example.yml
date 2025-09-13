@@ -1,0 +1,113 @@
+# Example configuration with Cypress integration enabled for Bilibili
+# This shows how to configure the system to use Cypress for more stable dynamic fetching
+
+# Global settings
+global:
+  timezone_offset: 8
+  user_agent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+# Query tasks configuration
+query_task:
+  # Traditional Bilibili query (existing method)
+  - name: "bilibili_traditional"
+    enable: false  # Disabled in favor of Cypress method
+    type: "bilibili"
+    uid_list:
+      - "322005137"
+    enable_dynamic_check: true
+    enable_living_check: true
+    begin_time: "08:00"
+    end_time: "23:00"
+    skip_forward: true
+    cookie: ""  # Can be empty when using Cypress
+    payload: ""  # Can be empty when using Cypress
+
+  # Cypress-based Bilibili query (new stable method)
+  - name: "bilibili_cypress"
+    enable: true
+    type: "bilibili"
+    use_cypress: true  # Enable Cypress browser automation
+    uid_list:
+      - "322005137"  # The UID you want to monitor
+      # - "123456789"  # Add more UIDs as needed
+    enable_dynamic_check: true
+    enable_living_check: true  # Can still use traditional method for live status
+    begin_time: "08:00"
+    end_time: "23:00"
+    skip_forward: true
+    # Note: cookie and payload are not needed with Cypress
+    # The browser will handle authentication automatically
+
+  # You can have both methods for different accounts
+  - name: "bilibili_mixed"
+    enable: true
+    type: "bilibili"
+    use_cypress: false  # Use traditional method for some accounts
+    uid_list:
+      - "987654321"  # Different UID using traditional method
+    enable_dynamic_check: true
+    enable_living_check: true
+    begin_time: "08:00"
+    end_time: "23:00"
+    skip_forward: true
+    cookie: "your_cookie_here"  # Still needed for traditional method
+    payload: "your_payload_here"
+
+# Push channel configuration (unchanged)
+push_channel:
+  - name: "webhook_test"
+    enable: true
+    type: "webhook"
+    url: "https://your-webhook-url.com/notify"
+    method: "POST"
+    headers:
+      Content-Type: "application/json"
+    template: |
+      {
+        "title": "{{title}}",
+        "content": "{{content}}",
+        "url": "{{url}}",
+        "pic_url": "{{pic_url}}"
+      }
+
+# Cache configuration
+cache:
+  type: "file"
+  file_path: "cache.json"
+  expire_time: 3600
+
+# Logging configuration  
+logging:
+  level: "INFO"
+  file: "logs/app.log"
+  max_size: 10485760  # 10MB
+  backup_count: 5
+
+# Proxy configuration (optional)
+proxy:
+  enable: false
+  http: ""
+  https: ""
+  
+# Cypress-specific settings (optional)
+cypress:
+  # Browser settings
+  browser: "chrome"  # or "chromium"
+  headless: true
+  timeout: 90  # seconds
+  
+  # Chrome flags for headless environments
+  chrome_flags:
+    - "--no-sandbox"
+    - "--disable-dev-shm-usage"
+    - "--disable-gpu"
+    
+  # Environment variables
+  env:
+    BILIBILI_UID: "322005137"
+    
+  # Debugging options
+  debug:
+    save_screenshots: false
+    save_videos: false
+    keep_fixtures: true  # Keep captured data files for debugging

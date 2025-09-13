@@ -8,13 +8,13 @@ common:
   # 推送通道
   push_channel:
     # 是否在项目启动时，给各通道发送一条测试消息 true/false
-    send_test_msg_when_start: false
+    send_test_msg_when_start: true
 
 query_task:
   # 任务名称，可自定义
   - name: 任务_bilibili
     # 是否启用 true/false
-    enable: false
+    enable: true
     # 任务类型，bilibili/weibo/xhs/douyin
     type: bilibili
     # 查询间隔，单位秒，不建议设置太频繁
@@ -25,27 +25,23 @@ query_task:
     end_time: "23:59"
     # 推送通道名称，对应 push_channel 中的 name
     target_push_name_list:
-      - 推送通道_企业微信应用
-      - 推送通道_钉钉机器人
+      - 推送通道_Server酱_Turbo
     # 是否启用动态检测 true/false
     enable_dynamic_check: true
     # 是否启用直播检测 true/false
     enable_living_check: true
     # 用户 uid 列表，参考 https://space.bilibili.com/1795147802
     uid_list:
-      - 1795147802
-      - 1669777785
-      - 1778026586
-      - 1875044092
-      - 1811071010
-      - 2018113152
+      - 322005137
     # 是否跳过提醒"转发"类型的动态 true/false
-    skip_forward: true
+    skip_forward: false
     # 如果请求提示 -352, 可以填入下面两项之一, 建议使用 payload 自动获取buvid3
     # cookie，可选，配置后可以一定程度防ban，建议用小号的，貌似无痕窗口不登录时拿到的cookie也能用，优先级高于自动获取buvid3
     cookie: ""
     # 浏览器指纹，取自于 /x/internal/gaia-gateway/ExClimbWuzhi 接口的body，需要填入的是payload参数的value，用于自动获取并激活buvid3
     payload: ""
+    # 是否使用 Cypress 浏览器自动化来获取动态数据（更稳定但资源消耗更大）true/false
+    use_cypress: true
   - name: 任务_weibo
     enable: false
     type: weibo
@@ -136,11 +132,11 @@ push_channel:
   # 通道名称，唯一，可自定义不要纯数字，对应 query_task 中的 target_push_name_list
   - name: 推送通道_Server酱_Turbo
     # 是否启用 true/false
-    enable: false
+    enable: true
     # 通道类型，详见 README.md
     type: serverChan_turbo
     # Server酱_Turbo推送服务，如果启用该推送，必须填入，获取参考 https://sct.ftqq.com
-    send_key:
+    send_key: test
   - name: 推送通道_Server酱_3
     enable: false
     type: serverChan_3
