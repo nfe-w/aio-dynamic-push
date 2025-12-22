@@ -167,7 +167,7 @@ class QueryBilibili(QueryTask):
                         log.info(f"【B站-查询动态状态-{self.name}】【{uname}】动态有更新，但不在需要推送的动态类型列表中，dynamic_type->{dynamic_type}")
                         return
 
-                    timestamp = item["modules"]["module_author"]["pub_ts"]
+                    timestamp = int(item["modules"]["module_author"]["pub_ts"])
                     dynamic_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(timestamp))
                     module_dynamic = item["modules"]["module_dynamic"]
 
@@ -265,7 +265,7 @@ class QueryBilibili(QueryTask):
                         log.info(f"【B站-查询动态状态-{self.name}】【{uname}】动态有更新，但不在需要推送的动态类型列表中")
                         return
 
-                    timestamp = item["desc"]["timestamp"]
+                    timestamp = int(item["desc"]["timestamp"])
                     dynamic_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(timestamp))
                     card_str = item["card"]
                     card = json.loads(card_str)
