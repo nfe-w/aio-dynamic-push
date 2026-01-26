@@ -108,23 +108,31 @@ class FeishuApps(PushChannel):
             return None
 
         url = "https://open.feishu.cn/open-apis/im/v1/images"
-        multi_form = MultipartEncoder({
-            'image_type': 'message',
-            'image': (open(file_path, 'rb'))
-        })
-        headers = {
-            'Authorization': f"Bearer {tenant_access_token}",
-            'Content-Type': multi_form.content_type,
-        }
-        response = util.requests_post(url, self.name, headers=headers, data=multi_form)
+        response = None
+        try:
+            # 使用上下文管理器确保文件在请求完成后被关闭
+            with open(file_path, 'rb') as f:
+                multi_form = MultipartEncoder({
+                    'image_type': 'message',
+                    # 同时传递文件名与内容类型，提升兼容性
+                    'image': (f"image{extension}", f, content_type if content_type else 'application/octet-stream')
+                })
+                headers = {
+                    'Authorization': f"Bearer {tenant_access_token}",
+                    'Content-Type': multi_form.content_type,
+                }
+                response = util.requests_post(url, self.name, headers=headers, data=multi_form)
+        finally:
+            # 无论上传是否成功都尝试删除临时文件，避免文件句柄占用导致 WinError 32
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                log.warning(f"【推送_{self.name}】删除临时图片失败：{file_path}，原因：{e}")
+
         if util.check_response_is_ok(response):
-            # 删除本地文件
-            os.remove(file_path)
             return response.json()["data"]["image_key"]
         else:
             log.error(f"【推送_{self.name}】上传图片失败")
-            # 删除本地文件
-            os.remove(file_path)
             return None
 
     def _get_tenant_access_token(self):
