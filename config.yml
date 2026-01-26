@@ -198,8 +198,8 @@ push_channel:
     base_url: https://api.sgroup.qq.com
     # 机器人ID，如果启动该推送则必填，https://q.qq.com/qqbot/#/developer/developer-setting
     app_id:
-    # 机器人令牌，如果启动该推送则必填
-    token:
+    # 机器人密钥，如果启动该推送则必填
+    app_secret:
     # 推送频道及子频道设置(支持多组)
     push_target_list:
       # 频道名称

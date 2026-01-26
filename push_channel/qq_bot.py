@@ -10,9 +10,9 @@ class QQBot(PushChannel):
         super().__init__(config)
         self.base_url = str(config.get("base_url", ""))
         self.app_id = str(config.get("app_id", ""))
-        self.token = str(config.get("token", ""))
+        self.app_secret = str(config.get("app_secret", ""))
         self.push_target_list = config.get("push_target_list", [])
-        if self.base_url == "" or self.app_id == "" or self.token == "" or len(self.push_target_list) == 0:
+        if self.base_url == "" or self.app_id == "" or self.app_secret == "" or len(self.push_target_list) == 0:
             log.error(f"【推送_{self.name}】配置不完整，推送功能将无法正常使用")
             return
         # 初始化目标频道
@@ -42,9 +42,18 @@ class QQBot(PushChannel):
             log.info(f"【推送_{self.name}】【{channel_name}】{push_result}")
 
     def get_headers(self):
-        return {
-            "Authorization": f"Bot {self.app_id}.{self.token}"
-        }
+        response = util.requests_post("https://bots.qq.com/app/getAppAccessToken", f"{self.name}_获取accessToken", headers={
+            "Content-Type": "application/json",
+        }, data=json.dumps({
+            "appId": self.app_id,
+            "clientSecret": self.app_secret
+        }))
+        if util.check_response_is_ok(response):
+            result = json.loads(str(response.content, "utf-8"))
+            return {
+                "Authorization": f"QQBot {result['access_token']}"
+            }
+        return {}
 
     # region 初始化参数
 
