@@ -158,10 +158,10 @@ push_channel:
     agent_id:
     # 应用Secret，如果启动该推送则必填
     corp_secret:
-  - name: 推送通道_企业微信机器人
+  - name: 推送通道_企业微信消息推送(原"群机器人")
     enable: false
     type: wecom_bot
-    # 机器人key，如果启动该推送则必填
+    # Webhook 地址中的 key，如果启动该推送则必填，即：https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx 中的 xxx
     key:
   - name: 推送通道_钉钉机器人
     enable: false

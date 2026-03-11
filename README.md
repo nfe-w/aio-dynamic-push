@@ -57,22 +57,22 @@ docker run -d -v [配置文件的绝对路径]/config.yml:/mnt/config.yml nfew/a
 
 - 支持配置多种推送通道
 
-| 通道类型          | type             | 推送附带图片  | 说明                                                                                                          |
-|---------------|------------------|:-------:|-------------------------------------------------------------------------------------------------------------|
-| Server酱_Turbo | serverChan_turbo |    ✅    | 🙅‍♀️不推荐，不用安装app，但免费用户5次/天<br/>👉https://sct.ftqq.com                                                       |
-| Server酱_3     | serverChan_3     |    ✅    | 🤔需要安装app<br/>👉https://sc3.ft07.com/                                                                       |
-| 企业微信自建应用      | wecom_apps       |    ✅    | 😢新用户不再推荐，2022年6月20日之后新创建的应用，需要配置可信IP<br/>👉https://work.weixin.qq.com/wework_admin/frame#apps/createApiApp |
-| 企业微信群聊机器人     | wecom_bot        |    ✅    | 🥳推荐，新建群聊添加自定义机器人即可<br/>👉https://developer.work.weixin.qq.com/document/path/99110                          |
-| 钉钉群聊机器人       | dingtalk_bot     |    ✅    | 🥳推荐，新建群聊添加自定义机器人即可，自定义关键词使用"【"<br/>👉https://open.dingtalk.com/document/robots/custom-robot-access         |
-| 飞书自建应用        | feishu_apps      |    ✅    | 🤔可以使用个人版，创建应用，授予其机器人权限<br/>👉https://open.feishu.cn/app?lang=zh-CN                                         |
-| 飞书群聊机器人       | feishu_bot       | ❌(暂不支持) | 🤩推荐，新建群聊添加自定义机器人即可，自定义关键词使用"【"<br/>👉https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot     |
-| Telegram机器人   | telegram_bot     |    ✅    | 🪜需要自备网络环境<br/>👉https://core.telegram.org/bots                                                             |
-| QQ频道机器人       | qq_bot           |    ✅    | 😢需要自行创建机器人，并启用机器人在频道内发言的权限<br/>👉https://q.qq.com/#/app/create-bot                                         |
-| NapCatQQ      | napcat_qq        |    ✅    | 🐧好用，但需要自行部署 NapCatQQ<br/>👉https://github.com/NapNeko/NapCatQQ                                             |
-| Bark          | bark             |    ❌    | 🍎适合苹果系用户，十分轻量，但没法推送图片<br/>👉https://apps.apple.com/cn/app/id1403753865                                     |
-| Gotify        | gotify           |    ❌    | 🖥️适合自建服务器<br/>👉https://gotify.net                                                                         |
-| Webhook       | webhook          | ✅(POST) | ⚡️通用的方式，请求格式详见附录                                                                                            |
-| 电子邮件          | email            |    ✅    | 📧通用的方式                                                                                                     |
+| 通道类型              | type             | 推送附带图片  | 说明                                                                                                          |
+|-------------------|------------------|:-------:|-------------------------------------------------------------------------------------------------------------|
+| Server酱_Turbo     | serverChan_turbo |    ✅    | 🙅‍♀️不推荐，不用安装app，但免费用户5次/天<br/>👉https://sct.ftqq.com                                                       |
+| Server酱_3         | serverChan_3     |    ✅    | 🤔需要安装app<br/>👉https://sc3.ft07.com/                                                                       |
+| 企业微信自建应用          | wecom_apps       |    ✅    | 😢新用户不再推荐，2022年6月20日之后新创建的应用，需要配置可信IP<br/>👉https://work.weixin.qq.com/wework_admin/frame#apps/createApiApp |
+| 企业微信消息推送(原"群机器人") | wecom_bot        |    ✅    | 🥳推荐，新建群聊添加自定义消息推送即可<br/>👉https://developer.work.weixin.qq.com/document/path/99110                         |
+| 钉钉群聊机器人           | dingtalk_bot     |    ✅    | 🥳推荐，新建群聊添加自定义机器人即可，自定义关键词使用"【"<br/>👉https://open.dingtalk.com/document/robots/custom-robot-access         |
+| 飞书自建应用            | feishu_apps      |    ✅    | 🤔可以使用个人版，创建应用，授予其机器人权限<br/>👉https://open.feishu.cn/app?lang=zh-CN                                         |
+| 飞书群聊机器人           | feishu_bot       | ❌(暂不支持) | 🤩推荐，新建群聊添加自定义机器人即可，自定义关键词使用"【"<br/>👉https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot     |
+| Telegram机器人       | telegram_bot     |    ✅    | 🪜需要自备网络环境<br/>👉https://core.telegram.org/bots                                                             |
+| QQ频道机器人           | qq_bot           |    ✅    | 😢需要自行创建机器人，并启用机器人在频道内发言的权限<br/>👉https://q.qq.com/#/app/create-bot                                         |
+| NapCatQQ          | napcat_qq        |    ✅    | 🐧好用，但需要自行部署 NapCatQQ<br/>👉https://github.com/NapNeko/NapCatQQ                                             |
+| Bark              | bark             |    ❌    | 🍎适合苹果系用户，十分轻量，但没法推送图片<br/>👉https://apps.apple.com/cn/app/id1403753865                                     |
+| Gotify            | gotify           |    ❌    | 🖥️适合自建服务器<br/>👉https://gotify.net                                                                         |
+| Webhook           | webhook          | ✅(POST) | ⚡️通用的方式，请求格式详见附录                                                                                            |
+| 电子邮件              | email            |    ✅    | 📧通用的方式                                                                                                     |
 
 ## 本地运行方式
 
