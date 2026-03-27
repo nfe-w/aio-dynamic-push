@@ -183,6 +183,11 @@ class QueryBilibili(QueryTask):
                             # 带图/图文动态，纯文本、大封面图文、九宫格图文
                             content = module_dynamic["major"]["opus"]["summary"]["text"]
                             try:
+                                title = module_dynamic["major"]["opus"]["title"]
+                                content = f"「{title}」{content}"
+                            except Exception:
+                                pass
+                            try:
                                 pic_url = module_dynamic["major"]["opus"]["pics"][0]["url"]
                             except Exception:
                                 pass
