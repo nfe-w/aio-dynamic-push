@@ -184,7 +184,7 @@ class QueryBilibili(QueryTask):
                             content = module_dynamic["major"]["opus"]["summary"]["text"]
                             try:
                                 title = module_dynamic["major"]["opus"]["title"]
-                                content = f"「{title}」{content}"
+                                content = f"「{title}」{content}" if title else content
                             except Exception:
                                 pass
                             try:
