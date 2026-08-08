@@ -17,10 +17,10 @@ class Webhook(PushChannel):
             log.warning(f"【推送_{self.name}】推送地址为空，跳过推送")
             return
         if self.request_method == "GET":
-            safe_title = quote(str(title))
-            safe_content = quote(str(content))
-            safe_jump = quote(str(jump_url))
-            safe_pic = quote(str(pic_url))
+            safe_title = quote(str(title), safe="")
+            safe_content = quote(str(content), safe="")
+            safe_jump = quote(str(jump_url) if jump_url else "", safe="")
+            safe_pic = quote(str(pic_url) if pic_url else "", safe="")
             push_url = (self.webhook_url
                         .replace("{{title}}", safe_title)
                         .replace("{{content}}", safe_content)
