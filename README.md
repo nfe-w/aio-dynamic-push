@@ -118,7 +118,7 @@ docker run -d -v [配置文件的绝对路径]/config.yml:/mnt/config.yml nfew/a
 #### GET 请求
 
 ```http request
-GET https://xxx.api.com?title={{title}}&content={{content}}
+GET https://xxx.api.com?title={{title}}&content={{content}}&jump_url={{jump_url}}&pic_url={{pic_url}}
 ```
 
 #### POST 请求
@@ -140,6 +140,12 @@ Content-Type: application/json
     ],
     "enable_living_check": false,
     "enable_dynamic_check": true
+  },
+  "query_task_data": {
+    "title": "标题",
+    "content": "这里是正文内容",
+    "jump_url": "https://example.com/",
+    "pic_url": "https://example.com/pic.png"
   },
   "dynamic_raw_data": {
     "key1": "value1",
