@@ -19,7 +19,14 @@ class Webhook(PushChannel):
         if self.request_method == "GET":
             response = util.requests_get(push_url, self.name)
         elif self.request_method == "POST":
-            response = util.requests_post(push_url, self.name, json=extend_data)
+            payload = extend_data.copy() if extend_data else {}
+            payload["query_task_data"] = {
+                "title": title,
+                "content": content,
+                "jump_url": jump_url,
+                "pic_url": pic_url,
+            }
+            response = util.requests_post(push_url, self.name, json=payload)
         else:
             log.error(f"【推送_{self.name}】不支持的请求方法：{self.request_method}")
             return
