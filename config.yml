@@ -239,7 +239,7 @@ push_channel:
   - name: 推送通道_Webhook
     enable: false
     type: webhook
-    # Webhook 地址，如果启动该推送则必填，占位符仅对 GET 请求有效
+    # Webhook 地址，如果启动该推送则必填
     # 标题 {{title}}，内容 {{content}}，跳转链接 {{jump_url}}，图片链接 {{pic_url}}
     webhook_url: https://xxx.com?title={{title}}&content={{content}}&jump_url={{jump_url}}&pic_url={{pic_url}}
     # 请求方法，GET/POST
