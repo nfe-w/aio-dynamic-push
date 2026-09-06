@@ -149,6 +149,15 @@ push_channel:
     uid:
     # 消息标签，非必填，多个标签使用竖线分隔，例如：标签1|标签2
     tags:
+  - name: 推送通道_WPUSH
+    enable: false
+    type: wpush
+    # WPUSH API Key，如果启用该推送，必须填入，获取参考 https://wpush.cn/settings
+    apikey:
+    # 推送渠道，可选 wechat/app/sms/mail/webhook/dingtalk/feishu/wechat_work/clawbot/qqbot，默认 wechat
+    channel: wechat
+    # 可选，Topic 广播编码
+    topic_code:
   - name: 推送通道_企业微信应用
     enable: false
     type: wecom_apps

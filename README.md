@@ -61,6 +61,7 @@ docker run -d -v [配置文件的绝对路径]/config.yml:/mnt/config.yml nfew/a
 |-------------------|------------------|:-------:|-------------------------------------------------------------------------------------------------------------|
 | Server酱_Turbo     | serverChan_turbo |    ✅    | 🙅‍♀️不推荐，不用安装app，但免费用户5次/天<br/>👉https://sct.ftqq.com                                                       |
 | Server酱_3         | serverChan_3     |    ✅    | 🤔需要安装app<br/>👉https://sc3.ft07.com/                                                                       |
+| WPUSH              | wpush            |    ✅    | 🥳推荐，多渠道推送（微信/App/钉钉/飞书等）+ Topic 广播，成功码 code===0<br/>👉https://wpush.cn/docs                              |
 | 企业微信自建应用          | wecom_apps       |    ✅    | 😢新用户不再推荐，2022年6月20日之后新创建的应用，需要配置可信IP<br/>👉https://work.weixin.qq.com/wework_admin/frame#apps/createApiApp |
 | 企业微信消息推送(原"群机器人") | wecom_bot        |    ✅    | 🥳推荐，新建群聊添加自定义消息推送即可<br/>👉https://developer.work.weixin.qq.com/document/path/99110                         |
 | 钉钉群聊机器人           | dingtalk_bot     |    ✅    | 🥳推荐，新建群聊添加自定义机器人即可，自定义关键词使用"【"<br/>👉https://open.dingtalk.com/document/robots/custom-robot-access         |
