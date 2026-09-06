@@ -14,6 +14,7 @@ from .telegram_bot import TelegramBot
 from .webhook import Webhook
 from .wecom_apps import WeComApps
 from .wecom_bot import WeComBot
+from .wpush import WPush
 
 push_channel_dict: dict[str, PushChannel] = {}
 
@@ -33,6 +34,7 @@ _channel_type_to_class = {
     "webhook": Webhook,
     "email": Email,
     "demo": Demo,
+    "wpush": WPush,
 }
 
 
